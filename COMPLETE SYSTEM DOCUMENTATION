@@ -1,0 +1,1718 @@
+
+# **CINESPOT MOVIE TICKET RESERVATION SYSTEM**
+## **COMPLETE SYSTEM DOCUMENTATION**
+
+---
+
+## **[INDEX.HTML - HOMEPAGE]**
+
+### **1. PURPOSE**
+Landing page after login. Displays all available movies across three categories (Now Showing, Advance Ticket Selling, Coming Soon). Users can search for movies, browse collections, and click to book tickets.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Header (cs-header)** | Navigation bar with CineSpot logo, menu links, and profile dropdown |
+| **Search Bar** | Real-time movie search across all categories with "no results" message |
+| **Movie Carousels (3 sections)** | Infinite-loop carousels for Now Showing, Advance, Coming Soon with prev/next buttons |
+| **Movie Cards** | Clickable poster cards with title, overlay text, and hover effects |
+| **Profile Dropdown** | Shows user name, email, member since, tickets booked; links to profile, history, settings, logout |
+| **Navigation Links** | Now Showing, Cinemas, Advance Ticket Selling, Coming Soon |
+
+### **3. USER INTERACTIONS**
+
+**Movie Search:**
+- User types in search box → filters movies from all 3 sections → highlights matching text → shows/hides "no results"
+- `filterAndRebuild()` function rebuilds carousels with filtered movies with `isSearchMode=true` (no duplication)
+
+**Carousel Navigation:**
+- Click **prev/next buttons** → moves carousel by one card width (cardWidth + 32px gap)
+- When at last card → jumps to clone of first card → transitions seamlessly to beginning
+- When at first card → jumps to clone of last card → infinite loop maintained
+
+**Movie Selection:**
+- Click poster → event listener on `.movie-card` captures click
+- Prevents multiple rapid clicks with `clicked` class flag
+- Stores `movieId` in `localStorage['selectedMovie']`
+- Stores full movie object in `sessionStorage['movieSelection']`
+- Navigates to movie-details.html
+
+**Profile Dropdown:**
+- Click on profile container → toggles `.show` class on dropdown
+- Click outside dropdown → removes `.show` class
+- Click "Sign Out" → removes `cinespot_logged_in` from localStorage → redirects to login.html
+
+### **4. DATA FLOW**
+
+**Data Stored:**
+- `localStorage['cinespot_logged_in']` - login status flag
+- `localStorage['cinespot_user']` - user object (name, email, password, tickets, member since)
+- `localStorage['selectedMovie']` - selected movie ID
+- `sessionStorage['movieSelection']` - full movie object (title, image, genre, director, cast, description, rating, cinema)
+
+**Data Retrieved:**
+- Profile data from `localStorage['cinespot_user']` populates header ("Hi, [name]")
+- Movie `carouselData` object contains all 11 movies across 3 categories
+- Movies normalized by ID: title → lowercase, spaces to hyphens, special chars removed
+
+**Data Transformation:**
+- Movie title → normalized ID (e.g., "The Batman" → "the-batman")
+- Movies duplicated 10+ times in carousel for infinite loop effect
+- First card cloned at end, last card cloned at beginning
+- Original cards marked with `data-original="true"` attribute
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** User comes from login.html (after authentication)
+**Current:** Home page showing all movies
+**Exit Options:**
+- Click movie poster → `movie-details.html?id=[movieId]`
+- Click "Now Showing" nav link → now-showing.html (simplified single-section view)
+- Click "Advance Ticket Selling" nav link → advance-ticket-selling.html
+- Click "Coming Soon" nav link → coming-soon.html
+- Click "Cinemas" nav link → cinemas.html
+- Click "View Profile" in dropdown → profile.html
+- Click "Booking History" in dropdown → booking-history.html
+- Click "Account Settings" in dropdown → account-settings.html
+
+---
+
+## **[LOGIN.HTML]**
+
+### **1. PURPOSE**
+Entry point to system. Validates user credentials against stored registration data.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Auth Card** | Centered form container with frosted glass effect |
+| **Background Film Posters** | 36 semi-transparent movie posters at various rotations (decorative) |
+| **Email Input** | Text field with red accent focus state |
+| **Password Input** | Password field with masked characters |
+| **Login Button** | Large red CTA button, triggers form submission |
+| **Register Link** | Link to register.html |
+
+### **3. USER INTERACTIONS**
+
+**Login Submission:**
+- User enters email and password
+- Form `submit` event → reads email/password values
+- Retrieves `cinespot_user` from localStorage
+- Validates: stored email === input email AND stored password === input password
+- If valid: sets `cinespot_logged_in='true'` → redirects to index.html
+- If invalid: shows alert "Invalid email or password!" → stays on page
+
+### **4. DATA FLOW**
+
+**Data Required:**
+- `localStorage['cinespot_user']` must exist (created during registration) containing `{ email, password, name, memberSince, ticketsBooked }`
+
+**Data Stored:**
+- Sets `localStorage['cinespot_logged_in'] = 'true'` on successful login
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** Direct navigation or from register.html
+**Current:** Login form
+**Exit:**
+- Valid auth → index.html
+- Click "Register here" link → register.html
+
+---
+
+## **[REGISTER.HTML]**
+
+### **1. PURPOSE**
+Create new user account. Stores user credentials and initializes user profile.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Full Name Input** | Text field |
+| **Email Input** | Email field with validation |
+| **Password Input** | Password field (masked) |
+| **Confirm Password Input** | Password field for verification |
+| **Register Button** | Large red CTA button |
+| **Login Link** | Link back to login.html |
+
+### **3. USER INTERACTIONS**
+
+**Registration Submission:**
+- User fills all 4 fields
+- Form `submit` → reads all values
+- Validates: password === confirmPassword
+- If not equal: shows alert "Passwords do not match!" → stays on page
+- If equal: creates complete user object
+
+**User Object Created:**
+```javascript
+{
+  name: string,
+  email: string,
+  password: string,
+  memberSince: ISO date string (now),
+  ticketsBooked: 0,
+  phone: '',          // optional, updated in settings
+  dateOfBirth: '',    // optional, updated in settings
+  preferredCinema: '',// optional, updated in settings
+  favoriteGenres: []  // array, updated in settings
+}
+```
+
+- Stores user object in `localStorage['cinespot_user']`
+- Sets `cinespot_logged_in = 'true'`
+- Redirects to index.html
+
+### **4. DATA FLOW**
+
+**Data Created:**
+- New user object with initial values
+- Stored in `localStorage['cinespot_user']`
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From login.html "Register here" link or direct nav
+**Current:** Registration form
+**Exit:**
+- Successful registration → index.html (logged in)
+- Click "Login here" link → login.html
+
+---
+
+## **[MOVIE-DETAILS.HTML]**
+
+### **1. PURPOSE**
+Movie detail view with booking controls and seat selection. Gateway to booking process. Contains three progressive sections: movie details, location/date selection, and seat selection.
+
+### **2. UI ELEMENTS**
+
+**Details Section (active first):**
+
+| Element | Function |
+|---------|----------|
+| **Movie Poster** | 350x500px poster image |
+| **Title Background** | Gradient container with movie title (48px, 800 weight) |
+| **Movie Details Card** | MTRCB rating, genre, director, cast, description, format |
+| **Date Selector Dropdown** | HTML date input |
+| **Format Selector** | Select dropdown (currently only "2D") |
+| **Schedule Selector** | Select with options: "12:40 PM", "2:50 PM" |
+
+**Location Section (shows after date + schedule selected):**
+
+| Element | Function |
+|---------|----------|
+| **Location Buttons** | "Metro Manila" and "Quezon City" toggle buttons |
+| **Selection State** | Selected button highlighted with red gradient + white text |
+
+**Seat Section (shows after location selected):**
+
+| Element | Function |
+|---------|----------|
+| **Seat Grid** | 12 rows (A-L) × 16 seats per row, divided into 3 sections (4-9-4 layout) |
+| **Seat States** | Available (red image), Selected (blue image), Reserved (green, disabled) |
+| **Seat Legend** | Shows color coding for all three states |
+| **Payment Summary Card** | Shows movie title, date, schedule, ticket count, seat numbers, total price |
+
+**Bottom Section:**
+
+| Element | Function |
+|---------|----------|
+| **Proceed to Payment Button** | Large red button, appears only when seats selected |
+
+### **3. USER INTERACTIONS**
+
+**Step 1: Select Date & Schedule**
+- User picks a date from date picker
+- User selects schedule (12:40 PM or 2:50 PM)
+- When BOTH selected → Location section becomes visible
+
+**Step 2: Select Location**
+- User clicks "Metro Manila" or "Quezon City"
+- Selected button gets `.selected` class (red gradient, white text)
+- Screen label updates to show: `MOVIE SCREEN - [TIME] @ Cinema 2`
+
+**Step 3: Select Seats**
+- Seat grid generates on first location selection
+- 12 rows (A-L) × 3 sections of seats:
+  - Section 1: seats 1-4
+  - Middle spacer: 35px gap
+  - Section 2: seats 5-13
+  - Right spacer: 35px gap
+  - Section 3: seats 14-16
+- Reserved seats (hardcoded: A3, A8, B5, C2, D1, D6, E4, F3) → green background, disabled, cursor not-allowed
+- Available seats → clickable, toggle between available/selected
+- Clicking seat → toggles class from `available` to `selected` (or vice versa)
+- Seat code added/removed from `selectedSeats` array
+
+**Step 4: Update Payment Summary**
+- Summary updates on every seat click
+- Shows: movie title (with format), date, schedule, cinema, seat count, price per ticket (310 PHP), admin fee (0), total price, seat numbers
+
+**Step 5: Proceed to Payment**
+- When ≥1 seat selected → "Proceed to Payment" button becomes visible
+- Click button → validates seats selected, creates `bookingData` object, stores in sessionStorage, navigates to moviegoer-details.html
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `sessionStorage['movieSelection']` or `localStorage['selectedMovie']` → movie details
+- `localStorage['cinespot_user']` → populate header
+
+**Data Stored:**
+- `selectedDate` - ISO date string (e.g., "2024-12-25")
+- `selectedFormat` - "2D" (or future 3D)
+- `selectedSchedule` - "12:40 PM" or "2:50 PM"
+- `selectedLocation` - "metro" or "quezon"
+- `selectedSeats` - array of seat codes (e.g., ["C5", "C6", "C7"])
+- `reservedSeats` - hardcoded array of unavailable seats
+
+**Data Passed to Next Page:**
+```javascript
+bookingData = {
+  movieTitle: "(2D) The Matrix",
+  movieDate: "2024-12-25",
+  cinemaName: "CineSpot Cinema 2",
+  scheduleTime: "2:50 PM Reserved Seating",
+  selectedSeats: "C5, C6, C7",
+  ticketCount: 3,
+  ticketPrice: 310.00,
+  adminFee: 0.00,
+  totalPrice: 930.00,
+  selectedFormat: "2D",
+  selectedLocation: "quezon",
+  selectedSchedule: "2:50 PM"
+}
+```
+Stored in `sessionStorage['bookingData']`
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From index.html movie card click (movieId passed)
+**Current:** Movie details + booking process
+**Exit:**
+- Click "Proceed to Payment" (with seats) → moviegoer-details.html
+- Click back button → previous page (history.back())
+- Click "Now Showing" nav → index.html
+- Click profile/settings links → respective pages
+
+---
+
+## **[MOVIEGOER-DETAILS.HTML]**
+
+### **1. PURPOSE**
+Collect moviegoer information (passenger details) before payment. Required fields for ticket issuance.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Page Title** | "Moviegoer Details" with gradient red text |
+| **Form Fields (2-column grid)** | First Name, Last Name, Email, Phone, Age, Gender (select), ID Type (select), ID Number |
+| **Terms Checkbox** | Agree to terms and conditions |
+| **Continue Button** | Proceed to payment page |
+| **Back Button** | Return to previous page |
+
+### **3. USER INTERACTIONS**
+
+**Form Filling:**
+- User enters first name, last name, email, phone, age
+- User selects gender and ID type from dropdowns
+- User enters ID number
+- User checks terms checkbox
+- User clicks "Continue"
+
+**Validation:**
+- All required fields must be filled
+- Email must be valid format
+- Age must be numeric
+- If validation fails → alert shown → form remains open
+
+**Data Collection:**
+- Form data captured and stored in sessionStorage
+- Ready to be combined with booking data on payment page
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `sessionStorage['bookingData']` - booking details from movie-details.html
+
+**Data Stored:**
+- Form data stored for payment processing:
+```javascript
+{
+  firstName: string,
+  lastName: string,
+  email: string,
+  phone: string,
+  age: number,
+  gender: string,
+  idType: string,
+  idNumber: string
+}
+```
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From movie-details.html (booking data in sessionStorage)
+**Current:** Passenger details form
+**Exit:**
+- Fill form + click "Continue" → payment.html
+- Click back button → movie-details.html
+
+---
+
+## **[PAYMENT.HTML]**
+
+### **1. PURPOSE**
+Display available payment methods and collect payment method selection. Shows booking summary and total amount.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Payment Title** | "PAYMENT" in red, uppercase |
+| **Payment Divider** | Gradient line separator |
+| **Payment Methods** | 2 rows: E-Wallet (GCash/PayMaya), Credit/Debit Card with placeholder icon |
+| **Method Selection** | Checkbox (always checked) with method name and note |
+| **Amount Display** | Right side shows amount for each method in red |
+| **Back Button** | Return to previous page (outline style) |
+| **Proceed Button** | Red gradient button to proceed to card details |
+
+### **3. USER INTERACTIONS**
+
+**Select Payment Method:**
+- Payment methods displayed in cards with hover effects
+- User clicks method → highlights method (already pre-selected with checkbox)
+- Only one method can be selected at a time (mutually exclusive)
+
+**Proceed:**
+- Click "Proceed to Card Details" → transitions to card-details.html with selected method
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `sessionStorage['bookingData']` - total price to display
+- Payment method information (hardcoded in HTML)
+
+**Data Passed:**
+- Selected payment method passed to card-details.html
+- Booking data continues in sessionStorage
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From moviegoer-details.html
+**Current:** Payment method selection
+**Exit:**
+- Select method + click "Proceed" → card-details.html
+- Click "Back" → moviegoer-details.html
+
+---
+
+## **[CARD-DETAILS.HTML]**
+
+### **1. PURPOSE**
+Collect credit/debit card information for payment processing. Final step before ticket confirmation.
+
+### **2. UI ELEMENTS**
+
+**Left Side - Payment Info Card:**
+
+| Element | Function |
+|---------|----------|
+| **Amount Display** | Large 48px weight-800 text showing total price |
+| **Details Rows** | Movie title, Date, Time, Cinema, Seats, Price breakdown |
+
+**Right Side - Card Form:**
+
+| Element | Function |
+|---------|----------|
+| **Form Title** | "Enter Card Details" with credit card icon |
+| **Cardholder Name** | Text input |
+| **Card Number** | Text input (16 digits) with formatting |
+| **Expiry Date** | MM/YY format input |
+| **CVV** | 3-digit input |
+| **Process Payment Button** | Large red button to finalize payment |
+
+### **3. USER INTERACTIONS**
+
+**Fill Card Form:**
+- User enters cardholder name
+- User enters 16-digit card number (auto-formatted with spaces: XXXX XXXX XXXX XXXX)
+- User enters expiry date (MM/YY)
+- User enters CVV (3 digits)
+- User clicks "Process Payment"
+
+**Validation:**
+- All fields required
+- Card number must be 16 digits
+- Expiry must be MM/YY format
+- CVV must be 3 digits
+- If invalid → alert → form remains
+
+**Payment Processing:**
+- Click "Process Payment" → validates all inputs
+- If valid → creates final ticket data combining all previous steps
+- Stores complete transaction in localStorage for history
+- Updates user's `ticketsBooked` count
+- Stores ticket/booking in user's bookings array
+- Navigates to ticket-success.html
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `sessionStorage['bookingData']` - booking details
+- Moviegoer details from previous page
+- Payment method selection
+
+**Data Combined & Stored:**
+```javascript
+// Complete booking record stored in user object
+{
+  bookingId: "AUTO-GENERATED",
+  bookingDate: ISO date,
+  movieTitle: string,
+  movieImage: URL string,
+  cinema: "CineSpot Cinema 2",
+  date: ISO date,
+  showtime: time string,
+  seats: array,
+  price: number,
+  format: "2D",
+  moviegoerInfo: { firstName, lastName, email, phone, age, gender, idType, idNumber },
+  paymentMethod: string,
+  cardLast4: last 4 digits,
+  status: "CONFIRMED"
+}
+```
+
+Updates localStorage:
+- Increments `cinespot_user.ticketsBooked`
+- Adds booking to `cinespot_user.bookings` array
+- Clears sessionStorage (bookingData, movieSelection, etc.)
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From payment.html
+**Current:** Card details form
+**Exit:**
+- Complete payment → ticket-success.html
+- (Note: back button typically disabled on payment pages)
+
+---
+
+## **[TICKET-SUCCESS.HTML]**
+
+### **1. PURPOSE**
+Final confirmation page after successful payment. Displays booking confirmation, ticket number, and QR code. Option to download ticket.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Success Icon** | Green checkmark circle with success colors |
+| **Success Title** | "BOOKING CONFIRMED" in green |
+| **Booking Reference** | "Confirmation Number: [12-DIGIT ID]" |
+| **Left Ticket Card** | Red gradient with movie/booking details, download button |
+| **Right Card** | QR code image, ticket barcode, booking reference |
+| **Details in Cards** | Movie title, date, time, seat numbers, total amount |
+| **Proceed Home Button** | Link to browse more movies (index.html) |
+
+### **3. USER INTERACTIONS**
+
+**View Confirmation:**
+- Page automatically loads and displays all booking details
+- Shows generated 12-digit booking/confirmation number
+- Displays QR code for ticket scanning
+
+**Download Ticket:**
+- Click "Download Ticket" button → triggers PDF download or print dialog
+- Downloads ticket with all details: booking reference, movie info, seats, QR code
+
+**Continue:**
+- Click "Continue Booking" button → returns to index.html to browse more movies
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `cinespot_user` from localStorage
+- Latest booking from `cinespot_user.bookings` array
+- Displays booking details without sessionStorage (it was cleared)
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From card-details.html (after successful payment)
+**Current:** Booking confirmation
+**Exit:**
+- Click "Continue Booking" → index.html
+- Click logo → index.html
+
+---
+
+## **[NOW-SHOWING.HTML, ADVANCE-TICKET-SELLING.HTML, COMING-SOON.HTML]**
+
+### **1. PURPOSE**
+Dedicated single-section movie listings. Simpler versions of index.html showing only one movie category. Static grid layout (not carousels).
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Header** | Same as index.html |
+| **Back Button** | Navigate back to index.html |
+| **Movie Section Title** | Category header |
+| **Movie Grid** | 3-4 movie cards in simple row (no carousel) |
+| **Movie Cards** | Standard clickable poster cards |
+
+### **3. USER INTERACTIONS**
+
+**Browse Movies:**
+- Page displays static grid of movies for category
+- Click movie poster → same flow as index.html
+- Stores movie details in sessionStorage
+- Navigates to movie-details.html
+
+**Navigation:**
+- Click back button → history.back()
+- Click nav links → navigate to other pages
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- Movie catalog array (hardcoded in each page's script section)
+- Movies filtered by category
+
+**Data Stored:**
+- `sessionStorage['movieSelection']` - selected movie
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From index.html nav links or direct navigation
+**Current:** Single category movie listing
+**Exit:**
+- Click movie poster → movie-details.html
+- Click back → index.html
+
+---
+
+## **[CINEMAS.HTML]**
+
+### **1. PURPOSE**
+Display information about available cinema locations. Informational page with cinema details, amenities, and links to book tickets at specific locations.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Header** | "CINEMAS" with gradient styling |
+| **Cinema Subtitle** | "Select a location and book your tickets" |
+| **Cinema Cards** | Grid of cinema location cards with: name, address, phone, amenities badges, CTA button |
+| **Cinema Badge** | Shows features (IMAX, 3D, Reserved Seating, etc.) |
+| **CTA Button** | "Book Tickets" button redirects to advance-ticket-selling.html or movie listing |
+
+### **3. USER INTERACTIONS**
+
+**Browse Cinemas:**
+- User views all available cinema locations
+- Reads location details, phone number, features
+- Hovers over cards → card lifts with shadow effect
+
+**Book at Cinema:**
+- Clicks "Book Tickets" → navigates to movie selection pages
+- May include location identifier for filtering
+
+### **4. DATA FLOW**
+
+**Data Hardcoded:**
+- Cinema information (name, address, phone, features)
+- No dynamic data retrieval
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From index.html nav or header links
+**Current:** Cinema information
+**Exit:**
+- Click "Book Tickets" → advance-ticket-selling.html or category pages
+- Click nav links → other pages
+
+---
+
+## **[PROFILE.HTML]**
+
+### **1. PURPOSE**
+Display user's personal profile information. Read-only view of user account details plus optional fields if populated (phone, date of birth, preferences).
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Profile Avatar** | Large user icon image (200px) with border |
+| **Personal Info Section** | Full Name, Email, Phone (conditional), DOB (conditional) |
+| **Account Info Section** | Account ID, Member Since, Total Tickets Booked, Account Status |
+| **Preferences Section** | Favorite Genres (conditional), Preferred Cinema (conditional) |
+| **Edit Button** | Link to account-settings.html |
+| **View History Button** | Link to booking-history.html |
+
+### **3. USER INTERACTIONS**
+
+**View Profile:**
+- Page loads user data from localStorage
+- Displays all available profile information
+- Optional fields only show if they have data
+
+**Edit Profile:**
+- Click "Edit Profile" button → navigates to account-settings.html
+- Click "View Booking History" button → navigates to booking-history.html
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `localStorage['cinespot_user']` - user object with all profile data
+- Formats dates for display
+- Shows optional fields conditionally
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From profile dropdown in header
+**Current:** Profile view
+**Exit:**
+- Click "Edit Profile" → account-settings.html
+- Click "View Booking History" → booking-history.html
+- Click nav links → other pages
+
+---
+
+## **[ACCOUNT-SETTINGS.HTML]**
+
+### **1. PURPOSE**
+Allows users to update personal information, change password, and set preferences (favorite genres, preferred cinema).
+
+### **2. UI ELEMENTS**
+
+**Personal Information Section:**
+
+| Element | Function |
+|---------|----------|
+| **Full Name Input** | Text input, pre-filled |
+| **Email Input** | Email input, pre-filled |
+| **Phone Input** | Tel input, pre-filled |
+| **Date of Birth Input** | Date input, pre-filled |
+| **Save Button** | Form submission |
+
+**Change Password Section:**
+
+| Element | Function |
+|---------|----------|
+| **Current Password** | Password input (required) |
+| **New Password** | Password input (required) |
+| **Confirm Password** | Password input (required) |
+| **Update Button** | Form submission with validation |
+
+**Preferences Section:**
+
+| Element | Function |
+|---------|----------|
+| **Favorite Genres** | Multiple select dropdown (Hold Ctrl/Cmd for multi-select) |
+| **Preferred Cinema** | Select dropdown (2 options) |
+| **Save Button** | Form submission |
+
+### **3. USER INTERACTIONS**
+
+**Update Personal Info:**
+- User modifies fields
+- Clicks "Save Changes"
+- Updates stored in localStorage
+- Shows success/error message
+
+**Change Password:**
+- User enters current password (validated)
+- User enters new password
+- User confirms new password (must match)
+- If validation passes → updates `cinespot_user.password`
+- Shows confirmation message
+
+**Update Preferences:**
+- User selects genres and cinema
+- Clicks "Save Preferences"
+- Stores in user object
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `localStorage['cinespot_user']` pre-fills all form fields
+
+**Data Updated:**
+- All form changes update the localStorage user object
+- User object persists across sessions
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From profile dropdown → "Account Settings"
+**Current:** Settings form
+**Exit:**
+- Save changes → stays on page, shows confirmation
+- Click nav links → other pages
+- Click back button → previous page
+
+---
+
+## **[BOOKING-HISTORY.HTML]**
+
+### **1. PURPOSE**
+Display all past bookings with booking details, dates, seats, and pricing. Filterable by status (all/upcoming/past). Optionally filter by date.
+
+### **2. UI ELEMENTS**
+
+| Element | Function |
+|---------|----------|
+| **Filters Section** | Dropdown for status (All, Upcoming, Past) + date picker |
+| **Booking List** | Cards showing each booking with: movie poster, title, cinema, date, time, seats, price |
+| **No Bookings Message** | Shows if no bookings exist with "Browse Movies" link |
+| **Booking Summary** | Summary stats: Total Bookings, Total Spent, Average per Booking |
+
+### **3. USER INTERACTIONS**
+
+**View Bookings:**
+- Page loads all bookings from user object
+- Displays in reverse chronological order (newest first)
+
+**Filter Bookings:**
+- Select status filter (All/Upcoming/Past) → filters displayed bookings
+- Select date → filters to show bookings on that date (if implemented)
+
+**View Booking Details:**
+- Each booking card shows all relevant information
+- May be clickable to view full booking details
+
+### **4. DATA FLOW**
+
+**Data Retrieved:**
+- `localStorage['cinespot_user'].bookings` - array of booking objects
+- Each booking contains: movieTitle, cinema, date, time, seats, price, movieImage
+
+**Data Calculated:**
+- Total bookings count
+- Total amount spent
+- Average amount per booking
+
+### **5. NAVIGATION FLOW**
+
+**Entry:** From profile dropdown → "Booking History"
+**Current:** Booking list
+**Exit:**
+- Click nav links → other pages
+- Click back button → previous page
+- If no bookings, "Browse Movies" link → index.html
+
+---
+
+## **[STYLES.CSS]**
+
+### **1. LAYOUT SYSTEM**
+
+**CSS Grid:**
+- Main container: `grid-template-columns: 1fr 350px` (for movie-details, payment pages)
+- Cinema cards: `grid-template-columns: repeat(auto-fit, minmax(320px, 1fr))`
+
+**Flexbox:**
+- Header: `display: flex; justify-content: space-between;` (logo | nav | profile)
+- Movie carousels: `display: flex; gap: 32px;`
+- Seat rows: `display: flex; gap: 8px;` (horizontal seats)
+
+**Positioning:**
+- Carousels use `transform: translateX()` for smooth horizontal scrolling
+- Profile dropdown: `position: absolute; top: 100%; right: 0;` (below icon)
+- Page frame: `margin: 16px auto; max-width: 1200px;` (centered container)
+
+### **2. GLOBAL STYLES**
+
+**Color Variables (CSS Custom Properties):**
+```css
+--bg-frame: #0a0a0a          /* darkest background */
+--bg-light: #1a1a1a          /* main content background */
+--bg-card: #2a2a2a           /* card/panel background */
+--accent: #e50914            /* primary red */
+--accent-dark: #b20710       /* darker red for hover/gradients */
+--text-main: #ffffff         /* main text */
+--text-muted: #b3b3b3        /* secondary/muted text */
+--border-light: #404040      /* light borders */
+--font-main: 'Montserrat'    /* primary font */
+```
+
+**Global Rules:**
+- `box-sizing: border-box` on all elements
+- Dark theme throughout
+- Smooth transitions: `transition: all 0.3s ease;`
+- Border radius: 8-16px for UI elements
+- Box shadows for depth: `0 8px 24px rgba(0, 0, 0, 0.3)`
+
+### **3. REUSABLE CLASSES**
+
+| Class | Purpose |
+|-------|---------|
+| `.page-dark-frame` | Dark outer background |
+| `.cs-header` | Red gradient header bar |
+| `.cs-main` | Main content container |
+| `.cs-nav` | Horizontal navigation |
+| `.movie-card` | Movie poster card container |
+| `.movie-poster-overlay` | Hover text on posters |
+| `.profile-dropdown` | Profile menu (position: absolute, z-index: 1500) |
+| `.btn-primary` | Red filled button |
+| `.btn-secondary` | Outlined button |
+| `.seat.available` | Red seat background |
+| `.seat.selected` | Blue seat background |
+| `.seat.reserved` | Green seat, disabled |
+| `.selected` | Active state for buttons |
+| `.show` | Display toggle for dropdowns |
+
+---
+
+## **[INDEX.JS - JAVASCRIPT CORE LOGIC]**
+
+### **1. EVENT LISTENERS**
+
+**On Page Load (`DOMContentLoaded`):**
+1. Render all three carousels from `carouselData`
+2. Initialize movie search functionality
+3. Set up search highlight
+4. Set up movie card click handler
+5. Load and display user profile data in header
+6. Initialize profile dropdown toggle
+7. Initialize sign-out links
+
+**Carousel Buttons:**
+- `.scroll-next` → increments `currentIndex`, calls `updateCarousel()`
+- `.scroll-prev` → decrements `currentIndex`, calls `updateCarousel()`
+
+**Search Input:**
+- `#movie-search-input` → `input` event triggers `filterAndRebuild()` and `updateHighlightedTitles()`
+
+**Profile Container:**
+- Click → toggles `.show` class on dropdown
+- Click outside → removes `.show` class
+- Sign-out link clicks → remove `cinespot_logged_in`, redirect to login.html
+
+**Transition End:**
+- Carousel track → detects when transition ends, trigger infinite loop logic
+
+### **2. CORE FEATURES**
+
+#### **A. CAROUSEL SYSTEM (Infinite Loop)**
+
+**Key Principle:**
+- Real cards rendered 10+ times for seamless loop
+- First and last cards cloned and placed at opposite ends
+- When loop reaches clone → instant jump to duplicate original with `transition: none`
+
+**Carousel Data Structure:**
+```javascript
+carouselData = {
+  "now-showing": [3 movies],
+  "advance-ticket": [4 movies],
+  "coming-soon": [4 movies]
+}
+```
+
+**Rendering Process (`renderCarousel`):**
+1. Get track element for section
+2. Clear old HTML
+3. Clone and refresh event listeners on buttons
+4. Calculate repetitions: `Math.max(10, Math.ceil(15 / movies.length))`
+5. Create card elements for every repetition
+6. In normal mode: add clones of last card at start and first card at end
+7. Call `initializeMovement()` with total items count
+
+**Movement Logic (`initializeMovement`):**
+- `cardWidth` = width of one card
+- `gap` = 32px spacing
+- `step` = cardWidth + gap (each card's total width space)
+- `currentIndex` = 1 in looping mode (starts at first duplicate)
+- On next button: `currentIndex++`, calculate `translateX = -(currentIndex * step)`
+- On prev button: `currentIndex--`, set translateX
+- When transition ends:
+  - If at last item (clone) → jump to item 1 (original first) with `transition: none`
+  - If at first position (clone) → jump to second-to-last item (original last) with `transition: none`
+
+**Critical Code:**
+```javascript
+track.ontransitionend = () => {
+  if (currentIndex === totalItems - 1) {
+    updateCarousel(1, true);  // jump to real first card
+  } else if (currentIndex === 0) {
+    updateCarousel(totalItems - 2, true);  // jump to real last card
+  }
+};
+```
+
+#### **B. SEAT SELECTION (Movie-Details.html)**
+
+**Seat Grid Generation:**
+- 12 rows (A-L) × 16 seats per row
+- Layout: [4 seats] [35px gap] [9 seats] [35px gap] [4 seats]
+- Total: 192 seats, with 8 hardcoded as reserved
+
+**Seat States:**
+- **Available:** Red seat image, clickable, cursor pointer
+- **Selected:** Blue seat image, togglable
+- **Reserved:** Green seat image, disabled, opacity 0.8, cursor not-allowed
+
+**Selection Logic:**
+```javascript
+toggleSeat(seatCode, element) {
+  if (element has 'selected') {
+    remove 'selected', add 'available'
+    filter seatCode from selectedSeats array
+  } else {
+    remove 'available', add 'selected'
+    push seatCode to selectedSeats array
+  }
+  updateSummary()
+  updateProceedButtonVisibility()
+}
+```
+
+**Price Calculation:**
+- Fixed price per ticket: 310.00 PHP
+- Admin fee: 0.00 PHP
+- Total = (ticketCount × 310) + 0
+
+**Data Storage:**
+```javascript
+selectedSeats = ["C5", "C6", "C7"]  // Array of seat codes
+bookingData = {
+  totalPrice: ticketCount * 310,
+  ticketCount: selectedSeats.length,
+  selectedSeats: selectedSeats.join(', ')
+  // ... plus movie and schedule details
+}
+```
+
+#### **C. MOVIE SEARCH & FILTER**
+
+**Search Filter Function:**
+```javascript
+filterAndRebuild() {
+  query = input.value.trim().toLowerCase()
+  isSearchMode = query.length > 0
+  
+  for each carouselData section:
+    if isSearchMode:
+      filtered = originals.filter(m => title includes query)
+      repetitions = 1 (no duplication)
+    else:
+      filtered = originals
+      repetitions = 10+
+    renderCarousel(filtered, isSearchMode)
+  
+  show/hide "No results" message based on totalMatches
+}
+```
+
+**Search Highlight:**
+```javascript
+updateHighlightedTitles() {
+  query = search input value
+  for each movie card:
+    titleElem = card.querySelector('.movie-title')
+    if query:
+      find index of query in title
+      wrap matching text in <span class="highlight">
+      set innerHTML (with escapeHTML)
+    else:
+      set textContent (plain)
+}
+```
+
+**HTML Escape Function:**
+```javascript
+escapeHTML(text) {
+  return text.replace(/[&<>"']/, char => htmlEntityMap[char])
+}
+```
+Prevents XSS if movie titles contain HTML characters.
+
+#### **D. MOVIE ID NORMALIZATION**
+
+```javascript
+normalizeMovieId(title) {
+  return title
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')      // spaces to hyphens
+    .replace(/[^a-z0-9-]/g, '') // remove special chars
+}
+// "The Batman" → "the-batman"
+// "Annihilation" → "annihilation"
+```
+
+Used consistently across all pages for movie lookups.
+
+#### **E. DATA STORAGE & RETRIEVAL**
+
+**localStorage (Persistent, Survives Browser Close):**
+```javascript
+localStorage["cinespot_logged_in"]  // true if logged in
+localStorage["cinespot_user"]       // entire user object (JSON)
+localStorage["selectedMovie"]       // last selected movie ID
+```
+
+**sessionStorage (Temporary, Clears on Tab Close):**
+```javascript
+sessionStorage["movieSelection"]    // full movie object (JSON)
+sessionStorage["bookingData"]       // booking details before payment
+```
+
+**Retrieval Pattern:**
+```javascript
+// Read
+const userData = JSON.parse(localStorage.getItem('cinespot_user'))
+
+// Write
+const userData = { name, email, ... }
+localStorage.setItem('cinespot_user', JSON.stringify(userData))
+
+// Delete
+localStorage.removeItem('cinespot_logged_in')
+```
+
+#### **F. PROFILE DROPDOWN TOGGLE**
+
+```javascript
+profileContainer.addEventListener('click', (e) => {
+  e.stopPropagation()
+  profileDropdown.classList.toggle('show')
+})
+
+document.addEventListener('click', () => {
+  profileDropdown.classList.remove('show')
+})
+```
+
+Ensures dropdown:
+- Opens on profile icon click
+- Closes on outside click
+- Doesn't close if clicking inside dropdown
+
+#### **G. SIGN OUT LOGIC**
+
+```javascript
+signOutLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault()
+    localStorage.removeItem('cinespot_logged_in')
+    window.location.href = 'login.html'
+  })
+})
+```
+
+Clears login flag and returns to login page.
+
+### **3. CRITICAL LOGIC (MUST NOT CHANGE)**
+
+| Logic | Sensitivity | Why? |
+|-------|-----------|------|
+| Carousel duplication count (10+) | HIGH | Affects smooth looping. Too few causes visual glitches |
+| `step = cardWidth + gap` | HIGH | Misalignment breaks carousel positioning |
+| Seat price: 310 PHP | MEDIUM | Changes affect total booking cost |
+| Reserved seats array | MEDIUM | Must maintain pre-booked seats |
+| `normalizeMovieId()` | CRITICAL | Movie lookup depends on consistent ID format |
+| Seat grid dimensions (12×16) | HIGH | Changes break seat selection UI and data |
+| `sessionStorage` for booking data | HIGH | Data loss if changed to cookie/other |
+| Transition instant jump logic | CRITICAL | Infinite loop breaks without `transition: none` |
+| Carousel repetitions calculation | HIGH | Affects whether carousel feels infinite |
+| Price calculation: `(count × 310) + 0` | MEDIUM | Cost transparency crucial for bookings |
+
+### **4. SENSITIVE CODE SECTIONS**
+
+**Carousel Track Transition End (CRITICAL):**
+```javascript
+track.ontransitionend = () => {
+  if (currentIndex === totalItems - 1) {
+    updateCarousel(1, true);  // ← must set transition: none for instant jump
+  } else if (currentIndex === 0) {
+    updateCarousel(totalItems - 2, true);
+  }
+};
+```
+**If changed:** Carousel will show visual jump or get stuck.
+
+**Seat Toggle (HIGH):**
+```javascript
+toggleSeat(seatCode, seatElement) {
+  if (seatElement.classList.contains('selected')) {
+    seatElement.classList.remove('selected');
+    seatElement.classList.add('available');
+    this.selectedSeats = this.selectedSeats.filter(s => s !== seatCode);
+  } else {
+    seatElement.classList.remove('available');
+    seatElement.classList.add('selected');
+    this.selectedSeats.push(seatCode);
+  }
+  this.updateSummary();
+}
+```
+**If changed:** Seat selection won't track properly, breaking bookings.
+
+**Movie Normalization (CRITICAL):**
+```javascript
+const id = normalizeMovieId(movie.title);
+movies[id] = movie;
+```
+**If changed:** Movies won't be found by ID, breaking page navigation.
+
+---
+
+## **FULL USER JOURNEY (COMPLETE FLOW)**
+
+### **STEP 1: AUTHENTICATION**
+1. User navigates to login.html
+2. If new user: clicks "Register here" → register.html
+   - Fills name, email, password, confirm password
+   - Submits → creates `cinespot_user` in localStorage
+   - Sets `cinespot_logged_in = 'true'`
+   - Redirects to index.html
+3. If existing user: enters email/password
+   - Validates against localStorage data
+   - Sets `cinespot_logged_in = 'true'`
+   - Redirects to index.html
+
+**Data Stored After Step 1:**
+```javascript
+localStorage = {
+  "cinespot_logged_in": "true",
+  "cinespot_user": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "secret123",
+    "memberSince": "2024-03-23T12:00:00.000Z",
+    "ticketsBooked": 0,
+    "bookings": []
+  }
+}
+```
+
+---
+
+### **STEP 2: BROWSE MOVIES (INDEX.HTML)**
+1. Index.html loads with three carousels rendered
+2. Profile dropdown shows user name and details from localStorage
+3. User can:
+   - **Search:** type in search box → carousels reformat with filters
+   - **Browse:** scroll through carousel with prev/next buttons
+   - **Select:** click movie poster → captures movieId
+
+**Data Added:**
+```javascript
+localStorage["selectedMovie"] = "the-batman"  // normalized ID
+sessionStorage["movieSelection"] = {
+  title: "The Batman",
+  image: "images/batman.png",
+  mtrcb: "R-13",
+  genre: "Action, Crime",
+  director: "Matt Reeves",
+  cast: "Robert Pattinson, Zoe Kravitz, Paul Dano",
+  description: "...",
+  cinemaName: "Robinsons Dumaguete Cinema 2"
+}
+```
+
+---
+
+### **STEP 3: VIEW MOVIE DETAILS + SELECT SEATS (MOVIE-DETAILS.HTML)**
+
+**Phase A: Movie Details Display**
+1. Page loads from `?id=the-batman` or sessionStorage data
+2. Displays: poster, title, rating, genre, director, cast, description
+3. Shows control panel with date, format, schedule dropdowns
+
+**Phase B: Date & Schedule Selection**
+1. User picks date from date picker
+2. User selects schedule ("12:40 PM" or "2:50 PM")
+3. When both selected → Location section appears
+
+**Phase C: Location Selection**
+1. User clicks "Metro Manila" or "Quezon City"
+2. Selected button highlights with red gradient
+3. Seat section appears
+
+**Phase D: Seat Selection**
+1. 12×16 seat grid generates
+2. 8 seats pre-marked as reserved (green, disabled)
+3. User clicks available seats (red) to select them (blue)
+4. Payment summary updates on each click:
+   - Shows movie title + format
+   - Shows date, time, cinema
+   - Shows selected seat count × 310 PHP
+   - Shows 0 admin fee
+   - Calculates total price
+   - Lists selected seat codes
+5. When ≥1 seat selected → "Proceed to Payment" button appears
+
+**Data Stored in sessionStorage:**
+```javascript
+sessionStorage["bookingData"] = {
+  movieTitle: "(2D) The Batman",
+  movieDate: "2024-12-25",
+  cinemaName: "CineSpot Cinema 2",
+  scheduleTime: "2:50 PM Reserved Seating",
+  selectedSeats: "C5, C6, C7",
+  ticketCount: 3,
+  ticketPrice: 310.00,
+  adminFee: 0.00,
+  totalPrice: 930.00,
+  selectedFormat: "2D",
+  selectedLocation: "quezon",
+  selectedSchedule: "2:50 PM"
+}
+```
+
+---
+
+### **STEP 4: MOVIEGOER DETAILS (MOVIEGOER-DETAILS.HTML)**
+
+1. Page displays form for passenger information (required for ticket issuing)
+2. User fills:
+   - First Name, Last Name
+   - Email, Phone
+   - Age, Gender (select), ID Type (select), ID Number
+   - Checks terms & conditions
+3. User clicks "Continue to Payment"
+4. Form data validated (all required fields)
+5. Data stored locally for payment step
+
+**Data Added:**
+```javascript
+// Stored in page (not persistent yet)
+moviegoerInfo = {
+  firstName: "John",
+  lastName: "Doe",
+  email: "john@example.com",
+  phone: "+63-912-345-6789",
+  age: 28,
+  gender: "Male",
+  idType: "Philippine ID",
+  idNumber: "123456789"
+}
+```
+
+---
+
+### **STEP 5: PAYMENT METHOD SELECTION (PAYMENT.HTML)**
+
+1. Page displays booking summary with total price (930.00 PHP)
+2. Shows 2 payment method options:
+   - E-Wallet (GCash/PayMaya)
+   - Credit/Debit Card
+3. User clicks preferred method (or accepts default)
+4. User clicks "Proceed to Card Details"
+
+**Data Tracked:**
+```javascript
+selectedPaymentMethod = "Credit Card"
+```
+
+---
+
+### **STEP 6: CARD PAYMENT (CARD-DETAILS.HTML)**
+
+1. Page displays payment info card (left) with total amount
+2. Displays card form (right) with fields:
+   - Cardholder Name
+   - Card Number (16 digits)
+   - Expiry (MM/YY)
+   - CVV (3 digits)
+3. User fills all fields
+4. User clicks "Process Payment"
+5. Form validated (all required, correct formats)
+6. **CRITICAL:** System processes payment
+
+**Payment Processing Steps:**
+```javascript
+// Validate card data
+if (valid) {
+  // Combine all booking data
+  bookingRecord = {
+    bookingId: generateId(),    // e.g., "BK20240323123456"
+    bookingDate: new Date().toISOString(),
+    movieTitle: "The Batman",
+    movieImage: "images/batman.png",
+    cinema: "CineSpot Cinema 2",
+    date: "2024-12-25",
+    showtime: "2:50 PM",
+    seats: ["C5", "C6", "C7"],
+    price: 930.00,
+    format: "2D",
+    moviegoerInfo: {firstName, lastName, email, phone, age, gender, idType, idNumber},
+    paymentMethod: "Credit Card",
+    cardLast4: "4242",
+    status: "CONFIRMED"
+  }
+  
+  // Update user object with booking
+  userData = JSON.parse(localStorage.getItem('cinespot_user'))
+  userData.ticketsBooked += 3           // increment by seat count
+  userData.bookings.push(bookingRecord)
+  localStorage.setItem('cinespot_user', JSON.stringify(userData))
+  
+  // Clear session data
+  sessionStorage.removeItem('bookingData')
+  sessionStorage.removeItem('movieSelection')
+  
+  // Navigate to success
+  window.location.href = 'ticket-success.html?id=' + bookingId
+}
+```
+
+**Data Stored in localStorage:**
+```javascript
+// User object now includes:
+cinespot_user = {
+  name: "John Doe",
+  email: "john@example.com",
+  password: "secret123",
+  memberSince: "2024-03-23T12:00:00.000Z",
+  ticketsBooked: 3,  // ← incremented from 0
+  bookings: [
+    {
+      bookingId: "BK20240323123456",
+      bookingDate: "2024-03-23T14:30:00.000Z",
+      movieTitle: "The Batman",
+      cinema: "CineSpot Cinema 2",
+      date: "2024-12-25",
+      showtime: "2:50 PM",
+      seats: ["C5", "C6", "C7"],
+      price: 930.00,
+      status: "CONFIRMED",
+      ...
+    }
+  ]
+}
+```
+
+---
+
+### **STEP 7: TICKET CONFIRMATION (TICKET-SUCCESS.HTML)**
+
+1. Page displays success message with green checkmark
+2. Shows booking reference number (auto-generated 12-digit ID)
+3. Displays ticket details in red card:
+   - Movie title + format + poster image
+   - Show date & time
+   - Cinema name
+   - Selected seats
+   - Total amount paid
+4. Displays QR code on right card
+5. User can:
+   - Click "Download Ticket" → PDF/print
+   - Click "Continue Booking" → returns to index.html
+
+---
+
+### **STEP 8: POST-BOOKING ACTIONS**
+
+**View Profile** (profile.html):
+- Shows all user information
+- Displays "Total Tickets Booked: 3"
+- Shows optional fields if populated (phone, DOB, preferences)
+
+**View Booking History** (booking-history.html):
+- Lists all bookings from `userData.bookings` array
+- Displays newest booking first with all details
+- Shows total spent, average per booking
+- Filter by status (Upcoming/Past) if implemented
+
+**Edit Account Settings** (account-settings.html):
+- Update personal info (name, email, phone, DOB)
+- Change password (validates current password)
+- Update preferences (favorite genres, preferred cinema)
+- All changes update localStorage
+
+---
+
+## **CRITICAL WARNINGS - BREAKING POINTS**
+
+### **❗ DO NOT CHANGE:**
+
+#### **1. MOVIE NORMALIZATION (CRITICAL)**
+- Function: `normalizeMovieId(title)`
+- Must consistently convert titles to: lowercase + hyphens + no special chars
+- **Impact:** Movies won't be matched by ID across pages → booking breaks
+- **What breaks:** Movie card clicks, all navigation to movie-details.html
+
+#### **2. CAROUSEL INFINITE LOOP LOGIC (CRITICAL)**
+- Key: `currentIndex === totalItems - 1` → jump to index 1 with `transition: none`
+- Must use `transition: none` for instant jump, then re-enable transition
+- Must calculate `totalItems = cardCount + 2` (for clones)
+- **Impact:** Carousel will show glitch jump or get stuck
+- **What breaks:** Movie carousel navigation
+
+#### **3. SEAT GRID DIMENSIONS (HIGH)**
+- Must be: 12 rows (A-L) × 16 seats per row
+- Layout structure: [4 seats] gap [9 seats] gap [4 seats]
+- **Impact:** Seat selection coordinates break, wrong seats sold
+- **What breaks:** Entire seat selection and booking data
+
+#### **4. PRICE CALCULATION (MEDIUM)**
+- Price per seat: 310.00 PHP (hardcoded)
+- Admin fee: 0.00 PHP (not variable)
+- Formula: `totalPrice = (selectedSeats.count × 310) + 0`
+- **Impact:** Wrong prices charged
+- **What breaks:** Payment amount, user confusion
+
+#### **5. DATA STORAGE KEYS (CRITICAL)**
+- **Must stay exactly:**
+  - `localStorage['cinespot_logged_in']`
+  - `localStorage['cinespot_user']`
+  - `localStorage['selectedMovie']`
+  - `sessionStorage['movieSelection']`
+  - `sessionStorage['bookingData']`
+- **Impact:** Data not retrieved, system breaks on all pages
+- **What breaks:** Entire session management, user login, page navigation
+
+#### **6. RESERVED SEATS ARRAY (MEDIUM)**
+- Current: `['A3', 'A8', 'B5', 'C2', 'D1', 'D6', 'E4', 'F3']`
+- Each seat code must be valid (row letter + seat number)
+- **Impact:** Wrong seats become available/reserved, double bookings
+- **What breaks:** Seat availability, overbooking
+
+#### **7. USER OBJECT STRUCTURE (HIGH)**
+```javascript
+// MUST contain exactly these properties:
+{
+  name: string,          // required
+  email: string,         // required
+  password: string,      // required
+  memberSince: ISO date, // required
+  ticketsBooked: number, // required, starts at 0
+  phone: string,         // optional
+  dateOfBirth: string,   // optional
+  preferredCinema: string, // optional
+  favoriteGenres: array, // optional, starts empty
+  bookings: array        // optional, starts empty
+}
+```
+**Impact:** Profile display breaks, booking history loads wrong data
+
+#### **8. FORM SUBMISSION LOGIC (HIGH)**
+- Must `preventDefault()` on form submit
+- Must validate all required fields
+- Must use `JSON.stringify()` for storage, `JSON.parse()` for retrieval
+- **Impact:** Data corruption, lost bookings
+
+#### **9. CAROUSEL STEP CALCULATION (HIGH)**
+```javascript
+const step = cardWidth + gap;  // gap MUST be 32px
+const translateX = -(currentIndex * step);
+```
+**Impact:** Carousel cards misaligned, carousel breaks
+
+#### **10. SESSION vs LOCAL STORAGE (HIGH)**
+- **localStorage:** Survives browser close, used for: user account, login status
+- **sessionStorage:** Gone on tab close, used for: current booking data
+- **Impact:** Booking data lost on page refresh, user logged out prematurely
+
+---
+
+### **❗ WILL BREAK IF MODIFIED:**
+
+#### **Dependencies Between Pages:**
+1. **index.html → movie-details.html:**
+   - Passes: `sessionStorage['movieSelection']` + `localStorage['selectedMovie']`
+   - Missing: Movie not loaded on details page
+
+2. **movie-details.html → moviegoer-details.html:**
+   - Passes: `sessionStorage['bookingData']`
+   - Missing: All booking info lost, can't process payment
+
+3. **moviegoer-details.html → payment.html:**
+   - Passes: `sessionStorage['bookingData']` (previously set)
+   - Missing: Can't display price, form submission fails
+
+4. **payment.html → card-details.html:**
+   - Passes: `sessionStorage['bookingData']` (still in memory)
+   - Missing: Payment amount not displayed
+
+5. **card-details.html → ticket-success.html:**
+   - Passes: `localStorage['cinespot_user']` (booking added), booking ID in URL
+   - Missing: Can't display confirmation
+
+#### **Carousel Replication System:**
+- If duplication removed: Carousel won't feel infinite, jerky motion
+- If duplication count reduced: Carousel might end before endless scroll
+- If gap changed: All translateX calculations wrong, carousel misaligned
+- If card width changed: Entire spacing breaks
+
+#### **Seat Selection Storage:**
+- If `selectedSeats` array becomes string or object: price calc fails
+- If seat codes change format: summary won't display correctly
+- If reserved seats not disabled: users can "book" already reserved seats
+
+#### **Profile Dropdown Position:**
+- Must be `position: absolute; top: 100%; right: 0; z-index: 1500`
+- If changed to `position: fixed` or relative: dropdown won't align with profile icon
+- If z-index reduced below 1000: header elements cover dropdown
+
+#### **Carousel Track Transition:**
+- If `transition: 0.4s ease` changed to shorter/longer: feels unnatural
+- If `transform-origin` added: rotation breaks carousel
+- If `will-change` removed: performance degrades on some browsers
+
+---
+
+### **❗ SEARCH INTERACTION ISSUES:**
+
+**How Search Affects Carousels:**
+1. Search input value changes → `filterAndRebuild()` called
+2. For each section:
+   - If search active: filter movies, render with `isSearchMode=true`
+   - If search empty: render all movies, render with `isSearchMode=false`
+3. `isSearchMode=false` triggers duplication (infinite loop setup)
+4. `isSearchMode=true` uses repetitions=1 (no clones)
+
+**Critical:** Event listeners cloned/refreshed on every search:
+```javascript
+const oldNext = section.querySelector('.scroll-next');
+const oldPrev = section.querySelector('.scroll-prev');
+const next = oldNext.cloneNode(true);    // ← new listener
+const prev = oldPrev.cloneNode(true);    // ← new listener
+oldNext.replaceWith(next);
+oldPrev.replaceWith(prev);
+```
+
+**If modified:** Carousel buttons won't work during/after search
+
+---
+
+### **❗ CRITICAL DATA VULNERABILITIES:**
+
+1. **Password Storage:** Stored plaintext in localStorage (not hashed)
+   - **Security Risk:** Anyone with access can read passwords
+   - **Don't change to:** Trying to hash in frontend (false security)
+   - **If needed:** Backend encryption required (beyond scope)
+
+2. **No Session Timeout:** Users stay logged in indefinitely
+   - **Risk:** If device stolen, attacker has access
+   - **Implement carefully:** Must not break 10-minute timeout if added
+
+3. **Payment Data:** Not stored, but should never be stored unencrypted
+   - **Confirm:** Card details should NOT be saved after submission
+   - **Currently:** Card data is used once then discarded (correct)
+
+4. **Booking Numbers:** Sequential/predictable
+   - **Risk:** Could enumerate/access other bookings
+   - **Currently:** Used for reference, not security
+
+---
+
+### **❗ WHAT MUST NEVER HAPPEN:**
+
+| Action | Result |
+|--------|--------|
+| Stop cloning first/last carousel cards | Carousel breaks, doesn't loop |
+| Remove `transition: none` on instant jump | Visible jump/glitch |
+| Change carousel gap from 32px | Cards misaligned |
+| Remove seat disabled attribute on reserved seats | Overbooking possible |
+| Store card details in localStorage | Data breach, PCI violation |
+| Use `==` instead of `===` in comparisons | Type coercion bugs |
+| Remove JSON.stringify() on storage | Objects become `[object Object]` |
+| Change date format mid-system | Dates won't match, queries fail |
+| Remove `stopPropagation()` on events | Event bubbling breaks dropdowns |
+| Modify normalizeMovieId() format | Movies won't be found by ID |
+| Remove moviegoer details validation | Null/undefined in booking data |
+| Change "Proceed to Payment" trigger | Users can proceed without seats |
+| Cache API calls (if later added) | Old data served after updates |
+| Store sessionStorage in localStorage | Session data persists across logins |
+| Allow concurrent edits in settings | Last save wins, data inconsistency |
+
+---
+
+## **COMPLETE SYSTEM DEPENDENCIES MAP**
+
+```
+LOGIN.HTML
+    ↓ (valid credentials)
+INDEX.HTML
+    ├─ carouselData (10 movies hardcoded)
+    ├─ movieSearch (filter + highlight)
+    └─ movieCard click
+        ↓
+MOVIE-DETAILS.HTML
+    ├─ movieSelection (sessionStorage)
+    ├─ Date + Schedule selection
+    ├─ Location Selection
+    ├─ Seat Grid (12×16, 8 reserved)
+    └─ Proceed to Payment
+        ↓
+MOVIEGOER-DETAILS.HTML
+    ├─ bookingData (sessionStorage)
+    └─ Form submission
+        ↓
+PAYMENT.HTML
+    ├─ bookingData.totalPrice display
+    └─ Payment method selection
+        ↓
+CARD-DETAILS.HTML
+    ├─ bookingData + moviegoer details combination
+    └─ Payment processing
+        └─ UPDATE localStorage user object
+        └─ ADD booking to user.bookings array
+        └─ CLEAR sessionStorage
+        ↓
+TICKET-SUCCESS.HTML
+    ├─ Display booking confirmation
+    ├─ Generate booking ID
+    └─ Option to download/print
+        ↓
+POST-BOOKING OPTIONS:
+    ├─ PROFILE.HTML (view user info)
+    ├─ BOOKING-HISTORY.HTML (view all bookings)
+    ├─ ACCOUNT-SETTINGS.HTML (edit profile)
+    └─ INDEX.HTML (browse more movies)
+
+ALWAYS ACCESSIBLE:
+    ├─ CINEMAS.HTML (cinema info)
+    ├─ NOW-SHOWING.HTML (movie browse)
+    ├─ ADVANCE-TICKET-SELLING.HTML (movie browse)
+    └─ COMING-SOON.HTML (movie browse)
+```
+
+---
+
+## **FINAL CHECKLIST FOR UI REDESIGN**
+
+✅ **Before You Start:**
+- [ ] Read this documentation completely
+- [ ] Understand all data flows
+- [ ] Identify all critical logic (listed above)
+- [ ] Map all page dependencies
+- [ ] Know which CSS classes can change vs must stay the same
+
+✅ **During Redesign:**
+- [ ] Preserve all HTML input/button `id` attributes (JavaScript relies on them)
+- [ ] Keep all `data-*` attributes (carousels use `data-carousel`, `data-section`)
+- [ ] Maintain mobile responsiveness where applicable
+- [ ] Don't remove any form fields (data requirements unchanged)
+- [ ] Keep event listener selectors (`.location-btn`, `.seat`, `.scroll-next`, etc.)
+
+✅ **Testing Critical Paths:**
+1. Login → Search movie → Select seats → Complete booking
+2. Profile update → Verify localStorage changes
+3. Carousel scroll → Check infinite loop at ends
+4. Seat selection → Verify reserved seats are disabled
+5. Payment flow → Confirm booking appears in history
+
+✅ **DO NOT:**
+- Change any JavaScript logic marked as CRITICAL or HIGH sensitivity
+- Modify data storage keys or structure
+- Remove validation functions
+- Change carousel duplication/timing logic
+- Alter seat grid dimensions without updating JavaScript
+- Remove form field names or IDs
+- Change class names used as event selectors
+
+---
+
+This documentation provides complete understanding of every page, every feature, every data flow, and every critical logic required to safely redesign the UI without breaking any functionality. Use this as your reference when explaining the system to other AI tools for redesign.
