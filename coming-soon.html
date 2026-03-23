@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CineSpot – Coming Soon</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-dark-frame">
+
+  <header class="cs-header">
+    <div class="cs-header-inner">
+      <div class="cs-header-left">
+        <a href="index.html" class="cs-logo-link">
+          <img src="images/cinespot_transparent_bg.png" alt="CineSpot logo" class="cs-logo-image" />
+        </a>
+      </div>
+      <nav class="cs-nav">
+        <a href="index.html" class="cs-nav-link">Now Showing</a>
+        <a href="cinemas.html" class="cs-nav-link">Cinemas</a>
+        <a href="advance-ticket-selling.html" class="cs-nav-link">Advance Ticket Selling</a>
+        <a href="coming-soon.html" class="cs-nav-link">Coming Soon</a>
+      </nav>
+      <div class="cs-header-right">
+        <div class="profile-container">
+          <span class="cs-user-text">Hi, <span id="user-name">User</span></span>
+          <img
+            src="images/profile_icon.png"
+            alt="Profile"
+            class="cs-user-icon"
+          />
+          <div class="profile-dropdown">
+            <div class="profile-overview">
+              <div class="profile-header">
+                <img src="images/profile_icon.png" alt="Profile" class="profile-avatar" />
+                <div>
+                  <p><strong id="dropdown-user-name">User</strong></p>
+                  <p class="profile-id">ID: CS-12345</p>
+                </div>
+              </div>
+              <div class="profile-details">
+                <p><strong>Email:</strong> <span id="dropdown-user-email">user@cinespot.com</span></p>
+                <p><strong>Member Since:</strong> <span id="dropdown-member-since">Jan 2024</span></p>
+                <p><strong>Tickets Booked:</strong> <span id="dropdown-tickets">0</span></p>
+              </div>
+            </div>
+            <div class="profile-menu">
+              <a href="profile.html" class="profile-link">View Profile</a>
+              <a href="booking-history.html" class="profile-link">Booking History</a>
+              <a href="account-settings.html" class="profile-link">Account Settings</a>
+              <a href="login.html" class="profile-link signout">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="back-button-container" style="max-width: 1200px; margin: 16px auto; padding: 0 20px;">
+    <a href="javascript:history.back()" class="back-button">← BACK</a>
+  </div>
+
+  <main class="cs-main">
+    <section class="cs-movies-header">
+      <h1 class="cs-movies-title">Movies</h1>
+    </section>
+
+    <div class="cs-divider"></div>
+
+    <section id="coming-soon" class="movie-section">
+      <h2 class="movie-section-title">Coming Soon</h2>
+      <div class="movie-row-simple">
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('The Phoenician Scheme')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/phoenician.png" class="movie-poster"/><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">The Phoenician Scheme</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('The Matrix')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/thematrix.png" class="movie-poster"/><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">The Matrix</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('Project Hail Mary')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/projecthm.png" class="movie-poster"/><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">Project Hail Mary</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('Golden')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/golden.png" class="movie-poster"/><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">Golden</p></div></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cs-footer"></footer>
+  <script>
+    const movieCatalog = {
+      'The Phoenician Scheme': {
+        title: 'The Phoenician Scheme',
+        image: 'images/phoenician.png',
+        mtrcb: 'PG-13',
+        genre: 'Action, Thriller',
+        director: 'Greta Gerwig',
+        cast: 'Oscar Isaac, Florence Pugh, Timothée Chalamet',
+        description: 'A brilliant archaeologist is pulled into a race against time when a hidden map surfaces, hinting at a lost civilization and a high-stakes conspiracy. As she assembles a rogue team, alliances form and betrayals loom, ensuring every twist keeps you engaged without revealing the ultimate puzzle.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'The Matrix': {
+        title: 'The Matrix',
+        image: 'images/thematrix.png',
+        mtrcb: 'R-16',
+        genre: 'Science Fiction, Action',
+        director: 'The Wachowskis',
+        cast: 'Keanu Reeves, Carrie-Anne Moss, Laurence Fishburne',
+        description: 'A computer hacker discovers the world he lives in is a digital illusion and joins a rebellion to fight for humanity’s freedom. Experience groundbreaking action, philosophical stakes, and a story that remains compelling every time.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'Project Hail Mary': {
+        title: 'Project Hail Mary',
+        image: 'images/projecthm.png',
+        mtrcb: 'PG',
+        genre: 'Science Fiction, Adventure',
+        director: 'Michael Bay',
+        cast: 'Chris Pratt, Anna Kendrick, Stanley Tucci',
+        description: 'A lone astronaut awakens from a coma onboard a spaceship with no memory of his mission, only to realize he is Earth’s final hope against an extinction-level threat. This thrilling journey blends science, humor, and surprising friendship as he fights to solve the impossible.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'Golden': {
+        title: 'Golden',
+        image: 'images/golden.png',
+        mtrcb: 'PG-13',
+        genre: 'Drama, Biography',
+        director: 'Denis Villeneuve',
+        cast: 'Taron Egerton, Jennifer Lawrence, Michael Fassbender',
+        description: 'Set against the glitter of international competition, a retired champion coach returns to mentor a new generation of athletes striving for impossible greatness. Intense training scenes and emotional breakthroughs create a compelling story of resilience and ambition.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      }
+    };
+
+    function selectMovie(key) {
+      const selection = movieCatalog[key] || movieCatalog['The Matrix'];
+      sessionStorage.setItem('movieSelection', JSON.stringify(selection));
+      window.location.href = 'movie-details.html';
+      return false;
+    }
+
+    // Profile dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileContainer = document.querySelector('.profile-container');
+      const profileDropdown = document.querySelector('.profile-dropdown');
+
+      if (profileContainer && profileDropdown) {
+        profileContainer.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+          profileDropdown.classList.remove('show');
+        });
+      }
+
+      const signOutLinks = document.querySelectorAll('.signout');
+      signOutLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('cinespot_logged_in');
+          window.location.href = 'login.html';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

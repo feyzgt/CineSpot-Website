@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CineSpot – Advance Ticket Selling</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-dark-frame">
+  <header class="cs-header">
+    <div class="cs-header-inner">
+      <div class="cs-header-left">
+        <a href="index.html" class="cs-logo-link">
+          <img src="images/cinespot_transparent_bg.png" alt="CineSpot logo" class="cs-logo-image" />
+        </a>
+      </div>
+      <nav class="cs-nav">
+        <a href="index.html" class="cs-nav-link">Now Showing</a>
+        <a href="cinemas.html" class="cs-nav-link">Cinemas</a>
+        <a href="advance-ticket-selling.html" class="cs-nav-link">Advance Ticket Selling</a>
+        <a href="coming-soon.html" class="cs-nav-link">Coming Soon</a>
+      </nav>
+      <div class="cs-header-right">
+        <div class="profile-container">
+          <span class="cs-user-text">Hi, <span id="user-name">User</span></span>
+          <img
+            src="images/profile_icon.png"
+            alt="Profile"
+            class="cs-user-icon"
+          />
+          <div class="profile-dropdown">
+            <div class="profile-overview">
+              <div class="profile-header">
+                <img src="images/profile_icon.png" alt="Profile" class="profile-avatar" />
+                <div>
+                  <p><strong id="dropdown-user-name">User</strong></p>
+                  <p class="profile-id">ID: CS-12345</p>
+                </div>
+              </div>
+              <div class="profile-details">
+                <p><strong>Email:</strong> <span id="dropdown-user-email">user@cinespot.com</span></p>
+                <p><strong>Member Since:</strong> <span id="dropdown-member-since">Jan 2024</span></p>
+                <p><strong>Tickets Booked:</strong> <span id="dropdown-tickets">0</span></p>
+              </div>
+            </div>
+            <div class="profile-menu">
+              <a href="profile.html" class="profile-link">View Profile</a>
+              <a href="booking-history.html" class="profile-link">Booking History</a>
+              <a href="account-settings.html" class="profile-link">Account Settings</a>
+              <a href="login.html" class="profile-link signout">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="back-button-container" style="max-width: 1200px; margin: 16px auto; padding: 0 20px;">
+    <a href="javascript:history.back()" class="back-button">← BACK</a>
+  </div>
+
+  <main class="cs-main">
+    <section class="cs-movies-header">
+      <h1 class="cs-movies-title">Movies</h1>
+    </section>
+    <div class="cs-divider"></div>
+    <section id="advance-ticket" class="movie-section">
+      <h2 class="movie-section-title">Advance Ticket Selling</h2>
+      <div class="movie-row-simple">
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('F1')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/f1.png" alt="F1" class="movie-poster" /><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">F1</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('Get Out')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/getout.png" alt="Get Out" class="movie-poster" /><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">Get Out</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('Hereditary')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/hereditary.png" alt="Hereditary" class="movie-poster" /><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">Hereditary</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('Interstellar')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/interstellar.png" alt="Interstellar" class="movie-poster" /><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">Interstellar</p></div></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cs-footer"></footer>
+  <script src="index.js"></script>
+  <script>
+    const movieCatalog = {
+      'F1': {
+        title: 'F1',
+        image: 'images/f1.png',
+        mtrcb: 'PG-13',
+        genre: 'Action, Sport',
+        director: 'Joseph Kosinski',
+        cast: 'Miles Teller, Daniel Brühl, Emily Blunt, Olivia Wilde',
+        description: 'A high-octane epic that gives you a front-row seat to the fierce rivalry between Formula 1 drivers Max and Lewis. Packed with speed, strategy, and dramatic precision, this story follows the intense pressures of competitive racing while humanizing the champions behind the helmets. Perfect for thrill-seekers and racing fans alike.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'Get Out': {
+        title: 'Get Out',
+        image: 'images/getout.png',
+        mtrcb: 'R-13',
+        genre: 'Horror, Thriller',
+        director: 'Jordan Peele',
+        cast: 'Daniel Kaluuya, Allison Williams, Bradley Whitford',
+        description: 'A young Black man visits his white girlfriend’s family estate and discovers that the seemingly polite gathering hides dark, mind-bending secrets. Suspense builds with each unsettling moment in this award-winning social commentary thriller that combines intelligence with raw chills.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'Hereditary': {
+        title: 'Hereditary',
+        image: 'images/hereditary.png',
+        mtrcb: 'R-16',
+        genre: 'Horror, Drama',
+        director: 'Ari Aster',
+        cast: 'Toni Collette, Gabriel Byrne, Alex Wolff',
+        description: 'After the family matriarch’s death, a grieving family begins to unravel cryptic and terrifying secrets about their ancestry. Tension and dread grow in every scene, making this unsettling psychological horror an unforgettable and haunting tale about legacy and fate.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'Interstellar': {
+        title: 'Interstellar',
+        image: 'images/interstellar.png',
+        mtrcb: 'PG',
+        genre: 'Science Fiction, Adventure',
+        director: 'Christopher Nolan',
+        cast: 'Matthew McConaughey, Anne Hathaway, Jessica Chastain',
+        description: 'A team of explorers travel through a wormhole near Saturn in search of a new home for humanity. Epic in scale and heart, this emotional sci-fi adventure blends jaw-dropping visuals with a deeply human story of love, sacrifice and what it means to survive against impossible odds.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      }
+    };
+
+    function selectMovie(key) {
+      const selection = movieCatalog[key] || movieCatalog['F1'];
+      sessionStorage.setItem('movieSelection', JSON.stringify(selection));
+      window.location.href = 'movie-details.html';
+      return false;
+    }
+    // Profile dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileContainer = document.querySelector('.profile-container');
+      const profileDropdown = document.querySelector('.profile-dropdown');
+
+      if (profileContainer && profileDropdown) {
+        profileContainer.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+          profileDropdown.classList.remove('show');
+        });
+      }
+
+      const signOutLinks = document.querySelectorAll('.signout');
+      signOutLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('cinespot_logged_in');
+          window.location.href = 'login.html';
+        });
+      });
+    });  </script>
+</body>
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CineSpot – Moviegoer Details</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400&family=Jost:wght@400&display=swap" rel="stylesheet">
+  <style>
+    .moviegoer-main {
+      width: 100%;
+      background-color: var(--bg-light);
+      padding: 50px 0;
+      min-height: auto;
+      border-radius: 12px;
+      margin: 16px auto;
+      max-width: 1200px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .moviegoer-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .moviegoer-title {
+      font-family: var(--font-main);
+      font-size: 48px;
+      font-weight: 800;
+      color: #333333;
+      margin: 0 0 20px 0;
+      padding: 0;
+      text-align: center;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .moviegoer-divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
+      margin: 0 0 40px 0;
+      border-radius: 1px;
+    }
+
+    .moviegoer-subtitle {
+      font-family: var(--font-main);
+      font-size: 24px;
+      font-weight: 700;
+      color: #cccccc;
+      margin: 0 0 20px 0;
+      padding: 0;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .moviegoer-description {
+      font-family: var(--font-main);
+      font-size: 18px;
+      color: #b3b3b3;
+      margin: 0;
+      line-height: 1.6;
+      text-align: center;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 500;
+    }
+
+    .form-section {
+      max-width: 900px;
+      margin: 60px auto 0;
+      padding: 0 40px;
+    }
+
+    .form-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 40px;
+    }
+
+    .form-group.full-width {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-family: var(--font-main);
+      font-size: 16px;
+      font-weight: 600;
+      color: #cccccc;
+    }
+
+    .form-input {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: var(--font-main);
+      font-size: 16px;
+      background-color: #3a3a3a;
+      outline: none;
+      transition: all 0.3s ease;
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-input::placeholder {
+      color: #999999;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #3a3a3a;
+      transform: translateY(-1px);
+    }
+
+    .terms-section {
+      max-width: 900px;
+      margin: 60px auto 0;
+      padding: 0 40px;
+    }
+
+    .terms-title {
+      font-family: var(--font-main);
+      font-size: 24px;
+      font-weight: 700;
+      color: #cccccc;
+      margin: 0 0 25px 0;
+      padding: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .terms-image {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      object-fit: contain;
+      margin: 20px 0 40px 0;
+      border: 2px solid var(--border-light);
+      border-radius: 8px;
+      padding: 20px;
+      background: var(--bg-card);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .terms-content {
+      width: 100%;
+      max-width: 800px;
+      height: 400px;
+      overflow-y: auto;
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: #2a2a2a;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-family: var(--font-main);
+      font-size: 14px;
+      line-height: 1.7;
+      color: #b3b3b3;
+    }
+
+    .terms-content p {
+      margin-bottom: 15px;
+    }
+
+    .terms-content strong {
+      color: var(--accent);
+    }
+
+    .payment-section {
+      max-width: 900px;
+      margin: 60px auto 0;
+      padding: 0 40px 60px;
+    }
+
+    .payment-method {
+      background: rgba(229, 9, 20, 0.3);
+      border: 2px solid rgba(229, 9, 20, 0.5);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .payment-method:hover {
+      border-color: rgba(229, 9, 20, 0.7);
+      background: rgba(229, 9, 20, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(229, 9, 20, 0.15);
+    }
+
+    .payment-method.selected {
+      border-color: #e50914;
+      background: #e50914;
+      box-shadow: 0 8px 24px rgba(229, 9, 20, 0.2);
+    }
+
+    .payment-icon {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .payment-text {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20px;
+      color: #ffffff;
+      font-weight: 600;
+      margin: 0;
+      padding: 0;
+    }
+
+    .agreement-section {
+      max-width: 900px;
+      margin: 80px auto 0;
+      padding: 0 40px;
+      display: flex;
+      gap: 25px;
+      align-items: flex-start;
+    }
+
+    .checkbox-wrapper {
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    .agreement-checkbox {
+      width: 32px;
+      height: 32px;
+      border: 2px solid #cccccc;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      background-color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .agreement-checkbox:hover {
+      border-color: #FF0F11;
+    }
+
+    .agreement-checkbox.checked {
+      background-color: #FF0F11;
+      border-color: #FF0F11;
+    }
+
+    .agreement-checkbox.checked::after {
+      content: "✓";
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .agreement-image {
+      flex: 1;
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      color: #999999;
+      line-height: 1.8;
+    }
+
+    .agreement-image img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .agreement-text {
+      margin: 0;
+      padding: 0;
+    }
+
+    .agreement-text a {
+      color: #FF0F11;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .agreement-text a:hover {
+      text-decoration: underline;
+    }
+
+    .button-container {
+      max-width: 900px;
+      margin: 80px auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .proceed-btn {
+      width: 288px;
+      height: 65px;
+      font-family: var(--font-main);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+    }
+
+    .proceed-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+    }
+
+    .proceed-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 6px rgba(229, 9, 20, 0.2);
+    }
+  </style>
+</head>
+<body class="page-dark-frame">
+  <header class="cs-header">
+    <div class="cs-header-inner">
+      <div class="cs-header-left">
+        <a href="index.html" class="cs-logo-link">
+          <img
+            src="images/cinespot_transparent_bg.png"
+            alt="CineSpot logo"
+            class="cs-logo-image"
+          />
+        </a>
+      </div>
+
+      <nav class="cs-nav">
+        <a href="index.html" class="cs-nav-link">Now Showing</a>
+        <a href="cinemas.html" class="cs-nav-link">Cinemas</a>
+        <a href="advance-ticket-selling.html" class="cs-nav-link">Advance Ticket Selling</a>
+        <a href="coming-soon.html" class="cs-nav-link">Coming Soon</a>
+      </nav>
+
+      <div class="cs-header-right">
+        <div class="profile-container">
+          <span class="cs-user-text">Hi, <span id="user-name">User</span></span>
+          <img
+            src="images/profile_icon.png"
+            alt="Profile"
+            class="cs-user-icon"
+          />
+          <div class="profile-dropdown">
+            <div class="profile-overview">
+              <div class="profile-header">
+                <img src="images/profile_icon.png" alt="Profile" class="profile-avatar" />
+                <div>
+                  <p><strong id="dropdown-user-name">User</strong></p>
+                  <p class="profile-id">ID: CS-12345</p>
+                </div>
+              </div>
+              <div class="profile-details">
+                <p><strong>Email:</strong> <span id="dropdown-user-email">user@cinespot.com</span></p>
+                <p><strong>Member Since:</strong> <span id="dropdown-member-since">Jan 2024</span></p>
+                <p><strong>Tickets Booked:</strong> <span id="dropdown-tickets">0</span></p>
+              </div>
+            </div>
+            <div class="profile-menu">
+              <a href="profile.html" class="profile-link">View Profile</a>
+              <a href="booking-history.html" class="profile-link">Booking History</a>
+              <a href="account-settings.html" class="profile-link">Account Settings</a>
+              <a href="login.html" class="profile-link signout">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="back-button-container" style="max-width: 1200px; margin: 16px auto; padding: 0 20px;">
+    <a href="javascript:history.back()" class="back-button">← BACK</a>
+  </div>
+
+  <main class="moviegoer-main">
+    <div class="moviegoer-header">
+      <h1 class="moviegoer-title">MOVIEGOER DETAILS</h1>
+      <div class="moviegoer-divider"></div>
+      <h2 class="moviegoer-subtitle">Please fill the details of the moviegoer</h2>
+      <p class="moviegoer-description">
+        These details are for the moviegoer (the person attending the movie). Even if you are paying for someone else, please enter their details here.
+      </p>
+    </div>
+
+    <!-- Customer Information Form -->
+    <form class="form-section" id="moviegoerForm">
+      <div class="form-group">
+        <div class="form-field">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" id="firstName" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" id="lastName" required />
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="email" required />
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <div class="form-field">
+          <label class="form-label">Mobile Number</label>
+          <input type="tel" class="form-input" id="mobileNumber" required />
+        </div>
+      </div>
+    </form>
+
+    <!-- Terms and Conditions Section -->
+    <div class="terms-section">
+      <h3 class="terms-title">Terms and Conditions</h3>
+      <div class="terms-content">
+        <p><strong>I. Ticket Purchase and Payment</strong></p>
+        <p>All ticket purchases are final and non-refundable. Payment must be completed at the time of booking. We accept major credit cards and digital payment methods.</p>
+
+        <p><strong>II. Age Restrictions</strong></p>
+        <p>Age-appropriate ratings apply to all movies. Valid ID may be required for restricted films. Children under 12 must be accompanied by an adult.</p>
+
+        <p><strong>III. Show Times and Seating</strong></p>
+        <p>Show times are subject to change. Seats are assigned on a first-come, first-served basis. Late arrivals may result in denied entry or reassigned seating.</p>
+
+        <p><strong>IV. Cancellation Policy</strong></p>
+        <p>Tickets cannot be cancelled or refunded once purchased. In case of technical issues or show cancellations, refunds will be processed within 7-10 business days.</p>
+
+        <p><strong>V. Conduct and Safety</strong></p>
+        <p>Disruptive behavior may result in removal from the premises without refund. Smoking, outside food/drinks, and recording devices are prohibited.</p>
+
+        <p><strong>VI. Privacy Policy</strong></p>
+        <p>Your personal information is used solely for ticket processing and customer service. We do not share your data with third parties without your consent.</p>
+
+        <p><strong>VII. Terms of Use</strong></p>
+        <p>By purchasing tickets, you agree to abide by all cinema policies and local laws. CineSpot reserves the right to modify these terms at any time.</p>
+      </div>
+    </div>
+
+    <!-- Payment Method Section -->
+    <div class="payment-section">
+      <h3 class="terms-title">Payment Method</h3>
+      <div class="payment-method" id="cardPayment">
+        <img src="images/card_icon.png" alt="Card Icon" class="payment-icon" />
+        <p class="payment-text">Credit/Debit Card</p>
+      </div>
+    </div>
+
+    <!-- Agreement Confirmation Section -->
+    <div class="agreement-section">
+      <div class="checkbox-wrapper">
+        <div class="agreement-checkbox" id="termsCheckbox"></div>
+      </div>
+      <div class="agreement-image">
+        <p class="agreement-text">
+          I have read, understood, and agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a> and I give my consent for the collection, use, and processing of my personal data as outlined in the Privacy Policy.
+        </p>
+      </div>
+    </div>
+
+    <!-- Proceed to Payment Button -->
+    <div class="button-container">
+      <button class="proceed-btn" id="proceedBtn" disabled>Proceed to Payment</button>
+    </div>
+  </main>
+
+  <footer class="cs-footer"></footer>
+
+  <script>
+    // Form and agreement handling
+    const termsCheckbox = document.getElementById('termsCheckbox');
+    const proceedBtn = document.getElementById('proceedBtn');
+    const moviegoerForm = document.getElementById('moviegoerForm');
+    const cardPayment = document.getElementById('cardPayment');
+
+    let checkboxChecked = false;
+    let formFilled = false;
+
+    // Checkbox toggle
+    termsCheckbox.addEventListener('click', () => {
+      checkboxChecked = !checkboxChecked;
+      termsCheckbox.classList.toggle('checked', checkboxChecked);
+      updateButtonState();
+    });
+
+    // Form input validation
+    const formInputs = moviegoerForm.querySelectorAll('input');
+    formInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        formFilled = Array.from(formInputs).every(field => field.value.trim() !== '');
+        updateButtonState();
+      });
+    });
+
+    // Payment method selection
+    cardPayment.addEventListener('click', () => {
+      cardPayment.classList.toggle('selected');
+    });
+
+    // Update button state
+    function updateButtonState() {
+      if (checkboxChecked && formFilled) {
+        proceedBtn.disabled = false;
+      } else {
+        proceedBtn.disabled = true;
+      }
+    }
+
+    // Proceed to payment
+    proceedBtn.addEventListener('click', () => {
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const mobileNumber = document.getElementById('mobileNumber').value;
+
+      if (checkboxChecked && formFilled) {
+        // Save customer data to sessionStorage
+        const customerData = {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          mobileNumber: mobileNumber
+        };
+        sessionStorage.setItem('customerData', JSON.stringify(customerData));
+
+        // Redirect to payment page
+        window.location.href = 'payment.html';
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileContainer = document.querySelector('.profile-container');
+      if (profileContainer) {
+        profileContainer.style.cursor = 'pointer';
+        profileContainer.addEventListener('click', function(e) {
+          const dropdown = this.querySelector('.profile-dropdown');
+          if (dropdown) {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+          } else {
+            window.location.href = 'profile.html';
+          }
+        });
+      }
+      const profileIcon = document.querySelector('.cs-user-icon');
+      if (profileIcon && !profileContainer) {
+        profileIcon.style.cursor = 'pointer';
+        profileIcon.addEventListener('click', function() {
+          window.location.href = 'profile.html';
+        });
+      }
+      const signOutLinks = document.querySelectorAll('.signout');
+      signOutLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          localStorage.removeItem('cinespot_logged_in');
+          window.location.href = 'login.html';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

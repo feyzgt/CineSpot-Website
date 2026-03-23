@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CineSpot – Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .film-poster {
+      position: absolute;
+      object-fit: cover;
+      border-radius: 14px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+      opacity: 0.1;
+      border: 1px solid rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+
+    .poster1 { width: 200px; top: 10%; left: 5%; transform: rotate(-5deg); }
+    .poster2 { width: 180px; top: 20%; right: 10%; transform: rotate(8deg); }
+    .poster3 { width: 220px; bottom: 15%; left: 15%; transform: rotate(-10deg); }
+    .poster4 { width: 190px; top: 5%; right: 20%; transform: rotate(12deg); }
+    .poster5 { width: 210px; bottom: 25%; right: 5%; transform: rotate(-7deg); }
+    .poster6 { width: 170px; top: 40%; left: 25%; transform: rotate(6deg); }
+    .poster7 { width: 230px; bottom: 5%; right: 25%; transform: rotate(-12deg); }
+    .poster8 { width: 200px; top: 60%; right: 15%; transform: rotate(9deg); }
+    .poster9 { width: 180px; top: 30%; left: 50%; transform: rotate(-8deg); }
+    .poster10 { width: 190px; bottom: 35%; left: 40%; transform: rotate(11deg); }
+    .poster11 { width: 210px; top: 70%; left: 10%; transform: rotate(-6deg); }
+    .poster12 { width: 220px; top: 50%; right: 30%; transform: rotate(7deg); }
+    .poster13 { width: 160px; top: 15%; left: 60%; transform: rotate(-9deg); }
+    .poster14 { width: 240px; bottom: 20%; right: 40%; transform: rotate(10deg); }
+    .poster15 { width: 180px; top: 25%; left: 70%; transform: rotate(-11deg); }
+    .poster16 { width: 200px; bottom: 10%; left: 55%; transform: rotate(5deg); }
+    .poster17 { width: 190px; top: 35%; right: 50%; transform: rotate(-7deg); }
+    .poster18 { width: 210px; top: 55%; left: 35%; transform: rotate(8deg); }
+    .poster19 { width: 170px; bottom: 30%; right: 60%; transform: rotate(-10deg); }
+    .poster20 { width: 220px; top: 45%; left: 45%; transform: rotate(12deg); }
+    .poster21 { width: 180px; top: 65%; right: 45%; transform: rotate(-5deg); }
+    .poster22 { width: 200px; bottom: 40%; left: 30%; transform: rotate(9deg); }
+    .poster23 { width: 190px; top: 75%; right: 35%; transform: rotate(-8deg); }
+    .poster24 { width: 210px; top: 80%; left: 20%; transform: rotate(11deg); }
+    .poster25 { width: 170px; bottom: 45%; right: 55%; transform: rotate(-6deg); }
+    .poster26 { width: 230px; top: 85%; left: 65%; transform: rotate(7deg); }
+    .poster27 { width: 180px; top: 90%; right: 70%; transform: rotate(-12deg); }
+    .poster28 { width: 200px; bottom: 50%; left: 75%; transform: rotate(10deg); }
+    .poster29 { width: 190px; top: 95%; right: 80%; transform: rotate(-9deg); }
+    .poster30 { width: 210px; top: 0%; left: 80%; transform: rotate(6deg); }
+    .poster31 { width: 170px; bottom: 55%; right: 85%; transform: rotate(-11deg); }
+    .poster32 { width: 220px; top: 10%; right: 90%; transform: rotate(8deg); }
+    .poster33 { width: 180px; bottom: 60%; left: 85%; transform: rotate(-7deg); }
+    .poster34 { width: 200px; top: 20%; left: 90%; transform: rotate(12deg); }
+    .poster35 { width: 190px; bottom: 65%; right: 95%; transform: rotate(-10deg); }
+    .poster36 { width: 210px; top: 30%; right: 0%; transform: rotate(9deg); }
+
+    .auth-card {
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(229, 9, 20, 0.3);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    .auth-logo {
+      width: 250px;
+      height: auto;
+      margin: 0 auto 30px;
+      display: block;
+      filter: drop-shadow(0 0 10px rgba(255,0,0,0.4));
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .auth-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: left;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid rgba(229, 9, 20, 0.3);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #ffffff;
+      font-size: 16px;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.3s ease;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .auth-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .auth-input:focus {
+      border-color: #e50914;
+      background: rgba(0, 0, 0, 0.9);
+      box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 16px 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      background: #e50914;
+      border: 2px solid #e50914;
+      border-radius: 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+      margin-top: 10px;
+    }
+
+    .auth-btn:hover {
+      background: #b20710;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+    }
+
+    .auth-btn:active {
+      transform: translateY(0);
+    }
+
+    .auth-secondary {
+      font-size: 14px;
+      color: #cccccc;
+      margin: 20px 0 0;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .auth-link {
+      color: #e50914;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .auth-link:hover {
+      color: #ff6b6b;
+    }
+  </style>
+</head>
+<body>
+  <img src="images/annihilation.png" class="film-poster poster1" alt="Annihilation" />
+  <img src="images/batman.png" class="film-poster poster2" alt="Batman" />
+  <img src="images/evildead.png" class="film-poster poster3" alt="The Evil Dead" />
+  <img src="images/f1.png" class="film-poster poster4" alt="F1" />
+  <img src="images/getout.png" class="film-poster poster5" alt="Get Out" />
+  <img src="images/golden.png" class="film-poster poster6" alt="Golden" />
+  <img src="images/hereditary.png" class="film-poster poster7" alt="Hereditary" />
+  <img src="images/interstellar.png" class="film-poster poster8" alt="Interstellar" />
+  <img src="images/marty.png" class="film-poster poster9" alt="Marty" />
+  <img src="images/phoenician.png" class="film-poster poster10" alt="Phoenician" />
+  <img src="images/projecthm.png" class="film-poster poster11" alt="Project HM" />
+  <img src="images/thematrix.png" class="film-poster poster12" alt="The Matrix" />
+  <img src="images/batman.png" class="film-poster poster13" alt="Batman" />
+  <img src="images/interstellar.png" class="film-poster poster14" alt="Interstellar" />
+  <img src="images/evildead.png" class="film-poster poster15" alt="The Evil Dead" />
+  <img src="images/getout.png" class="film-poster poster16" alt="Get Out" />
+  <img src="images/hereditary.png" class="film-poster poster17" alt="Hereditary" />
+  <img src="images/thematrix.png" class="film-poster poster18" alt="The Matrix" />
+  <img src="images/annihilation.png" class="film-poster poster19" alt="Annihilation" />
+  <img src="images/f1.png" class="film-poster poster20" alt="F1" />
+  <img src="images/golden.png" class="film-poster poster21" alt="Golden" />
+  <img src="images/marty.png" class="film-poster poster22" alt="Marty" />
+  <img src="images/phoenician.png" class="film-poster poster23" alt="Phoenician" />
+  <img src="images/projecthm.png" class="film-poster poster24" alt="Project HM" />
+  <img src="images/annihilation.png" class="film-poster poster25" alt="Annihilation" />
+  <img src="images/batman.png" class="film-poster poster26" alt="Batman" />
+  <img src="images/evildead.png" class="film-poster poster27" alt="The Evil Dead" />
+  <img src="images/f1.png" class="film-poster poster28" alt="F1" />
+  <img src="images/getout.png" class="film-poster poster29" alt="Get Out" />
+  <img src="images/golden.png" class="film-poster poster30" alt="Golden" />
+  <img src="images/hereditary.png" class="film-poster poster31" alt="Hereditary" />
+  <img src="images/interstellar.png" class="film-poster poster32" alt="Interstellar" />
+  <img src="images/marty.png" class="film-poster poster33" alt="Marty" />
+  <img src="images/phoenician.png" class="film-poster poster34" alt="Phoenician" />
+  <img src="images/projecthm.png" class="film-poster poster35" alt="Project HM" />
+  <img src="images/thematrix.png" class="film-poster poster36" alt="The Matrix" />
+
+  <div class="auth-card">
+    <img src="images/cinespotfront.png" class="auth-logo" alt="CineSpot" />
+
+    <form class="auth-form" action="index.html" method="get">
+      <div>
+        <label class="auth-label" for="email">Email</label>
+        <input class="auth-input" type="email" id="email" name="email" placeholder="Enter your email" required />
+      </div>
+
+      <div>
+        <label class="auth-label" for="password">Password</label>
+        <input class="auth-input" type="password" id="password" name="password" placeholder="Enter your password" required />
+      </div>
+
+      <button type="submit" class="auth-btn">Login</button>
+    </form>
+
+    <p class="auth-secondary">
+      Don't have an account?
+      <a href="register.html" class="auth-link">Register here</a>
+    </p>
+  </div>
+
+  <script>
+    document.querySelector('.auth-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      // Get user data from localStorage
+      const userData = JSON.parse(localStorage.getItem('cinespot_user'));
+
+      if (!userData) {
+        alert('No account found. Please register first.');
+        return;
+      }
+
+      if (userData.email === email && userData.password === password) {
+        // Set login status
+        localStorage.setItem('cinespot_logged_in', 'true');
+        // Redirect to index
+        window.location.href = 'index.html';
+      } else {
+        alert('Invalid email or password!');
+      }
+    });
+  </script>
+</body>
+</html>

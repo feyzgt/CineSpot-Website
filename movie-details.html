@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CineSpot – Movie Details</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans+SC:wght@400&family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      position: relative;
+      background-color: var(--bg-frame);
+    }
+    .cs-header {
+      position: relative;
+      z-index: 1500;
+      overflow: visible;
+    }
+    .cs-header-inner {
+      overflow: visible;
+    }
+    /* Profile dropdown explicit rules for movie-details */
+    .profile-container {
+      position: relative;
+      z-index: 1300;
+      pointer-events: auto;
+    }
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      z-index: 1500;
+      display: none;
+      pointer-events: auto;
+    }
+    .profile-dropdown.show {
+      display: block;
+    }
+    .movie-details-main {
+      width: 100%;
+      background-color: var(--bg-light);
+      padding: 0;
+      position: relative;
+      border-radius: 12px;
+      margin: 16px auto;
+      max-width: 1200px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .details-section {
+      width: 100%;
+      max-width: 1200px;
+      margin: 40px auto 0;
+      height: auto;
+      background-color: var(--bg-light);
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      padding: 40px;
+    }
+    .details-section.hidden {
+      display: none;
+    }
+    .movie-poster-details {
+      width: 350px;
+      height: 500px;
+      object-fit: cover;
+      flex-shrink: 0;
+      margin-left: 0;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .details-content {
+      flex: 1;
+      height: auto;
+      position: relative;
+      margin-left: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .title-bg {
+      position: relative;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 80px;
+      background: linear-gradient(135deg, var(--bg-card) 0%, #1a1a1a 100%);
+      border-radius: 12px;
+      margin: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      box-sizing: border-box;
+      z-index: 1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .movie-title-details {
+      font-family: var(--font-main);
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    .movie-details-text {
+      position: relative;
+      width: 100%;
+      height: auto;
+      font-family: var(--font-main);
+      font-size: 18px;
+      color: var(--text-main);
+      line-height: 1.8;
+      margin-top: 0;
+      background: var(--bg-card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .movie-details-text p {
+      margin: 12px 0;
+      color: #cccccc;
+    }
+    .controls-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 300px;
+      flex-shrink: 0;
+      margin-left: auto;
+      margin-top: 0;
+      background: var(--bg-card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .control-label {
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .control-input {
+      padding: 12px 16px;
+      border: 2px solid var(--border-light);
+      border-radius: 8px;
+      font-family: var(--font-main);
+      font-size: 14px;
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+    .control-input:hover {
+      border-color: var(--accent);
+      background-color: rgba(229, 9, 20, 0.05);
+    }
+    .control-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15);
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+    .control-input option {
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+    .control-input option:hover,
+    .control-input option:checked {
+      background-color: #333333;
+      color: #ffffff;
+    }
+    .control-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15);
+    }
+    /* Location Selection */
+    .location-section {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px;
+      display: none;
+      background-color: var(--bg-light);
+    }
+    .location-section.active {
+      display: block;
+    }
+    .location-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      font-family: var(--font-main);
+      color: #333333;
+      letter-spacing: 0.5px;
+    }
+    .location-buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .location-btn {
+      padding: 14px 32px;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 14px;
+      color: #333333;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .location-btn:hover {
+      border-color: var(--accent);
+      background: rgba(229, 9, 20, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.2);
+    }
+    .location-btn.selected {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: var(--text-main);
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
+    }
+    /* Seat Reservation Section */
+    .seat-section {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px;
+      display: none;
+      background-color: #f8f9fa;
+    }
+    .seat-section.active {
+      display: block;
+    }
+    .seat-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      font-family: var(--font-main);
+      color: #333333;
+      letter-spacing: 0.5px;
+    }
+    .seat-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-top: 20px;
+    }
+    .seat-grid-wrapper {
+      flex: 1;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 32px;
+      border-radius: 12px;
+      width: 100%;
+      height: 649px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .seat-screen-label {
+      text-align: center;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 14px;
+      color: #333333;
+      background: linear-gradient(135deg, #8b2635 0%, #a03246 100%);
+      padding: 12px;
+      margin-bottom: 24px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .seat-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .seat-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+    }
+    .seat-row-label {
+      width: 30px;
+      font-weight: 600;
+      font-family: var(--font-main);
+      font-size: 14px;
+      text-align: center;
+      color: #333333;
+    }
+    .seat-row-seats {
+      display: flex;
+      gap: 8px;
+    }
+    .seat {
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      font-family: var(--font-main);
+      font-size: 10px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      background-color: transparent;
+      color: transparent;
+      padding: 0;
+    }
+    .seat.available {
+      background-image: url('images/redseat.png');
+      filter: brightness(1.3);
+    }
+    .seat.available:hover {
+      transform: scale(1.1);
+      filter: brightness(1.5);
+    }
+    .seat.selected {
+      background-image: url('images/blueseat.png');
+      filter: brightness(1.3);
+    }
+    .seat.reserved {
+      background-image: url('images/greenseat.png');
+      cursor: not-allowed;
+      opacity: 0.8;
+      filter: brightness(1.1);
+    }
+    .seat-legend {
+      display: flex;
+      gap: 40px;
+      margin-top: 24px;
+      justify-content: center;
+      font-family: var(--font-main);
+      font-size: 14px;
+      color: #333333;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .legend-color.reserved-icon {
+      background-image: url('images/greenseat.png');
+    }
+    .legend-color.available-icon {
+      background-image: url('images/redseat.png');
+    }
+    .legend-color.selected-icon {
+      background-image: url('images/blueseat.png');
+    }
+    /* Payment Summary */
+    .summary-container {
+      flex: 0 0 auto;
+      margin-top: 0;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .payment-summary {
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      width: 100%;
+      min-height: 611px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      color: #333333;
+    }
+    .summary-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #8b2635;
+      margin-bottom: 15px;
+    }
+    .summary-item {
+      margin-bottom: 10px;
+      line-height: 1.6;
+      color: #555555;
+    }
+    .summary-label {
+      font-weight: bold;
+      color: #8b2635;
+      margin-top: 10px;
+    }
+    .summary-seats {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #e0e0e0;
+    }
+    /* Proceed to Payment Button */
+    .payment-button-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 40px;
+      background-color: #ffffff;
+      display: none;
+      box-sizing: border-box;
+    }
+    .payment-button-container.active {
+      display: block;
+    }
+    .proceed-btn {
+      width: 288px;
+      height: 65px;
+      font-family: var(--font-main);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+    }
+    .proceed-btn:hover {
+      background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+    }
+  </style>
+</head>
+<body class="page-dark-frame">
+  <header class="cs-header">
+    <div class="cs-header-inner">
+      <div class="cs-header-left">
+        <a href="index.html" class="cs-logo-link">
+          <img
+            src="images/cinespot_transparent_bg.png"
+            alt="CineSpot logo"
+            class="cs-logo-image"
+          />
+        </a>
+      </div>
+
+      <nav class="cs-nav">
+        <a href="index.html" class="cs-nav-link">Now Showing</a>
+        <a href="cinemas.html" class="cs-nav-link">Cinemas</a>
+        <a href="advance-ticket-selling.html" class="cs-nav-link">Advance Ticket Selling</a>
+        <a href="coming-soon.html" class="cs-nav-link">Coming Soon</a>
+      </nav>
+
+      <div class="cs-header-right">
+        <div class="profile-container">
+          <span class="cs-user-text">Hi, <span id="user-name">User</span></span>
+          <img
+            src="images/profile_icon.png"
+            alt="Profile"
+            class="cs-user-icon"
+          />
+          <div class="profile-dropdown">
+            <div class="profile-overview">
+              <div class="profile-header">
+                <img src="images/profile_icon.png" alt="Profile" class="profile-avatar" />
+                <div>
+                  <p><strong id="dropdown-user-name">User</strong></p>
+                  <p class="profile-id">ID: CS-12345</p>
+                </div>
+              </div>
+              <div class="profile-details">
+                <p><strong>Email:</strong> <span id="dropdown-user-email">user@cinespot.com</span></p>
+                <p><strong>Member Since:</strong> <span id="dropdown-member-since">Jan 2024</span></p>
+                <p><strong>Tickets Booked:</strong> <span id="dropdown-tickets">0</span></p>
+              </div>
+            </div>
+            <div class="profile-menu">
+              <a href="profile.html" class="profile-link">View Profile</a>
+              <a href="booking-history.html" class="profile-link">Booking History</a>
+              <a href="account-settings.html" class="profile-link">Account Settings</a>
+              <a href="login.html" class="profile-link signout">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="back-button-container" style="max-width: 1200px; margin: 16px auto; padding: 0 20px;">
+    <a href="javascript:history.back()" class="back-button">← BACK</a>
+  </div>
+
+  <main class="movie-details-main">
+    <!-- Movie Details Section with Controls -->
+    <div class="details-section active" id="detailsSection">
+      <img id="moviePoster" src="images/thematrix.png" alt="The Matrix" class="movie-poster-details" />
+      <div class="details-content">
+        <!-- Title Section -->
+        <div class="title-bg">
+          <h1 id="movieTitleDisplay" class="movie-title-details">The Matrix</h1>
+        </div>
+        <div class="movie-details-text">
+          <p><strong>MTRCB RATING:</strong> <span id="ratingDisplay">R-16</span></p>
+          <p><strong>GENRE:</strong> <span id="genreDisplay">Science Fiction, Action</span></p>
+          <p><strong>DIRECTOR:</strong> <span id="directorDisplay">Lana Wachowski and Lilly Wachowski</span></p>
+          <p><strong>CAST:</strong> <span id="castDisplay">Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving</span></p>
+          <p id="descriptionDisplay">When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth—the life he knows is the elaborate deception of an evil cyber-intelligence.</p>
+          <p><strong>AVAILABLE IN:</strong> 2D</p>
+        </div>
+      </div>
+      <!-- Controls on the right -->
+      <div class="controls-panel">
+        <div class="control-group">
+          <label class="control-label">SELECT AVAILABLE DATE:</label>
+          <input type="date" class="control-input" id="dateSelect">
+        </div>
+        <div class="control-group">
+          <label class="control-label">WATCH IN:</label>
+          <select class="control-input" id="watchFormat">
+            <option value="2D">2D</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label class="control-label">SCHEDULE:</label>
+          <select class="control-input" id="scheduleSelect">
+            <option value="">Select Schedule</option>
+            <option value="12:40 PM">12:40 PM – RESERVED SEATING</option>
+            <option value="2:50 PM">2:50 PM – RESERVED SEATING</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Selection Section (hidden until date/schedule selected) -->
+    <div class="location-section" id="locationSection">
+      <div class="location-title">Select a Location</div>
+      <div class="location-buttons">
+        <button class="location-btn" data-location="metro">Metro Manila</button>
+        <button class="location-btn" data-location="quezon">Quezon City</button>
+      </div>
+    </div>
+
+    <!-- Seat Reservation & Payment Summary -->
+    <div class="seat-section" id="seatSection">
+      <div class="seat-title">SEAT RESERVATION</div>
+      <div class="seat-container">
+        <div class="seat-grid-wrapper">
+          <div class="seat-screen-label" id="screenLabel"></div>
+          <div class="seat-grid" id="seatGrid"></div>
+          <div class="seat-legend">
+            <div class="legend-item">
+              <div class="legend-color reserved-icon"></div>
+              <span>Reserved</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color available-icon"></div>
+              <span>Available</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color selected-icon"></div>
+              <span>Selected</span>
+            </div>
+          </div>
+        </div>
+        <div class="summary-container">
+          <div class="payment-summary" id="paymentSummary">
+            <div class="summary-title">Payment Summary</div>
+            <div id="summaryContent">
+              <p style="color: #999;">Select seats to see summary</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proceed to Payment Button (hidden until seats selected) -->
+    <div class="payment-button-container" id="paymentButtonContainer">
+      <button class="proceed-btn" id="proceedBtn">Proceed to Payment</button>
+    </div>
+  </main>
+
+  <footer class="cs-footer"></footer>
+
+  <script src="index.js"></script>
+  <script>
+    // Cinema booking system
+    class CinemaBooking {
+      constructor() {
+        this.selectedLocation = null;
+        this.selectedDate = null;
+        this.selectedFormat = '2D';
+        this.selectedSchedule = null;
+        this.selectedSeats = [];
+        this.reservedSeats = ['A3', 'A8', 'B5', 'C2', 'D1', 'D6', 'E4', 'F3'];
+        
+        this.init();
+      }
+
+      init() {
+        // Location buttons
+        document.querySelectorAll('.location-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.location-btn').forEach(b => b.classList.remove('selected'));
+            e.target.classList.add('selected');
+            this.selectedLocation = e.target.dataset.location;
+            this.showSeatSection();
+          });
+        });
+
+        // Date listener
+        document.getElementById('dateSelect').addEventListener('change', (e) => {
+          this.selectedDate = e.target.value;
+          this.checkShowLocationSection();
+          this.updateSummary();
+        });
+
+        // Format listener
+        document.getElementById('watchFormat').addEventListener('change', (e) => {
+          this.selectedFormat = e.target.value;
+          this.updateSummary();
+        });
+
+        // Schedule listener
+        document.getElementById('scheduleSelect').addEventListener('change', (e) => {
+          this.selectedSchedule = e.target.value;
+          this.checkShowLocationSection();
+          this.updateSummary();
+        });
+
+        // Proceed button
+        document.getElementById('proceedBtn').addEventListener('click', () => {
+          if (this.selectedSeats.length > 0) {
+            const movie = JSON.parse(sessionStorage.getItem('movieSelection')) || { title: 'The Matrix' };
+            const ticketCount = this.selectedSeats.length;
+            const ticketPrice = 310.00;
+            const adminFee = 0.00;
+            const totalPrice = (ticketCount * ticketPrice) + adminFee;
+
+            const bookingData = {
+              movieTitle: `(${this.selectedFormat}) ${movie.title}`,
+              movieDate: this.selectedDate,
+              cinemaName: 'CineSpot Cinema 2',
+              scheduleTime: `${this.selectedSchedule} Reserved Seating`,
+              selectedSeats: this.selectedSeats.join(', '),
+              ticketCount: ticketCount,
+              ticketPrice: ticketPrice,
+              adminFee: adminFee,
+              totalPrice: totalPrice,
+              selectedFormat: this.selectedFormat,
+              selectedLocation: this.selectedLocation,
+              selectedSchedule: this.selectedSchedule
+            };
+            sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+            window.location.href = 'moviegoer-details.html';
+          } else {
+            alert('Please select at least one seat.');
+          }
+        });
+      }
+
+      checkShowLocationSection() {
+        if (this.selectedDate && this.selectedSchedule) {
+          document.getElementById('locationSection').classList.add('active');
+        }
+      }
+
+      showSeatSection() {
+        document.getElementById('seatSection').classList.add('active');
+        if (!document.getElementById('seatGrid').querySelector('.seat')) {
+          this.generateSeats();
+        }
+        this.updateScreenLabel();
+      }
+
+      updateScreenLabel() {
+        const locationName = this.selectedLocation === 'metro' ? 'Metro Manila' : 'Quezon City';
+        const screenLabel = `MOVIE SCREEN - ${this.selectedSchedule} @ Cinema 2`;
+        document.getElementById('screenLabel').textContent = screenLabel;
+      }
+
+      generateSeats() {
+        const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+        const grid = document.getElementById('seatGrid');
+        grid.innerHTML = '';
+
+        rows.forEach(row => {
+          const rowDiv = document.createElement('div');
+          rowDiv.className = 'seat-row';
+
+          const label = document.createElement('div');
+          label.className = 'seat-row-label';
+          label.textContent = row;
+          rowDiv.appendChild(label);
+
+          const seatsDiv = document.createElement('div');
+          seatsDiv.className = 'seat-row-seats';
+
+          // First section: 4 seats
+          for (let i = 1; i <= 4; i++) {
+            const seatCode = `${row}${i}`;
+            const seat = this.createSeatButton(seatCode);
+            seatsDiv.appendChild(seat);
+          }
+
+          // Middle space
+          const spacer1 = document.createElement('div');
+          spacer1.style.width = '35px';
+          seatsDiv.appendChild(spacer1);
+
+          // Second section: 9 seats
+          for (let i = 5; i <= 13; i++) {
+            const seatCode = `${row}${i}`;
+            const seat = this.createSeatButton(seatCode);
+            seatsDiv.appendChild(seat);
+          }
+
+          // Right space
+          const spacer2 = document.createElement('div');
+          spacer2.style.width = '35px';
+          seatsDiv.appendChild(spacer2);
+
+          // Third section: 4 seats
+          for (let i = 14; i <= 16; i++) {
+            const seatCode = `${row}${i}`;
+            const seat = this.createSeatButton(seatCode);
+            seatsDiv.appendChild(seat);
+          }
+
+          rowDiv.appendChild(seatsDiv);
+          grid.appendChild(rowDiv);
+        });
+      }
+
+      createSeatButton(seatCode) {
+        const seat = document.createElement('button');
+        seat.className = 'seat';
+        seat.textContent = seatCode.charAt(1);
+        seat.dataset.seat = seatCode;
+
+        if (this.reservedSeats.includes(seatCode)) {
+          seat.classList.add('reserved');
+          seat.disabled = true;
+        } else {
+          seat.classList.add('available');
+          seat.addEventListener('click', () => this.toggleSeat(seatCode, seat));
+        }
+
+        return seat;
+      }
+
+      toggleSeat(seatCode, seatElement) {
+        if (seatElement.classList.contains('selected')) {
+          seatElement.classList.remove('selected');
+          seatElement.classList.add('available');
+          this.selectedSeats = this.selectedSeats.filter(s => s !== seatCode);
+        } else {
+          seatElement.classList.remove('available');
+          seatElement.classList.add('selected');
+          this.selectedSeats.push(seatCode);
+        }
+        this.updateSummary();
+        this.updateProceedButtonVisibility();
+      }
+
+      updateProceedButtonVisibility() {
+        if (this.selectedSeats.length > 0 && this.selectedLocation) {
+          document.getElementById('paymentButtonContainer').classList.add('active');
+        } else {
+          document.getElementById('paymentButtonContainer').classList.remove('active');
+        }
+      }
+
+      updateSummary() {
+        const summaryContent = document.getElementById('summaryContent');
+        if (!this.selectedLocation || !this.selectedDate || !this.selectedSchedule) {
+          summaryContent.innerHTML = '<p style="color: #999;">Select all options to see summary</p>';
+          return;
+        }
+
+        const locationName = this.selectedLocation === 'metro' ? 'Metro Manila' : 'Quezon City';
+        const pricePerTicket = 310.00;
+        const totalTickets = this.selectedSeats.length || 1;
+        const ticketTotal = pricePerTicket * totalTickets;
+        const adminFee = 0.00;
+        const totalPrice = ticketTotal + adminFee;
+        const selectedTitle = (typeof selectedMovieDetails !== 'undefined' && selectedMovieDetails?.title) ? selectedMovieDetails.title : 'The Matrix';
+
+        let html = `
+          <div class="summary-item"><strong>(${this.selectedFormat}) ${selectedTitle}</strong></div>
+          <div class="summary-item">${this.selectedDate}</div>
+          <div class="summary-item">CineSpot Cinema 2</div>
+          <div class="summary-item">${this.selectedSchedule} Reserved Seating</div>
+          <div class="summary-label">Ticket(s)</div>
+          <div class="summary-item">${totalTickets}x ${pricePerTicket.toFixed(2)} PHP</div>
+          <div class="summary-label">Web Admin Fee</div>
+          <div class="summary-item">1x 0.00 PHP:0.00 PHP</div>
+          <div class="summary-label">Total Price: ${totalPrice.toFixed(2)} PHP</div>
+        `;
+
+        if (this.selectedSeats.length > 0) {
+          html += `<div class="summary-seats"><strong>${this.selectedSeats.join(', ')}</strong></div>`;
+        }
+
+        summaryContent.innerHTML = html;
+      }
+    }
+
+    let selectedMovieDetails = null;
+
+    function loadMovieDetails() {
+      const storedSelection = sessionStorage.getItem('movieSelection');
+
+      if (storedSelection) {
+        try {
+          selectedMovieDetails = JSON.parse(storedSelection);
+        } catch (e) {
+          selectedMovieDetails = null;
+        }
+      }
+
+      if (!selectedMovieDetails) {
+        const movieId = localStorage.getItem('selectedMovie');
+        selectedMovieDetails = movies[movieId] || null;
+      }
+
+      if (!selectedMovieDetails) {
+        selectedMovieDetails = {
+          title: 'The Matrix',
+          image: 'images/thematrix.png',
+          mtrcb: 'R-16',
+          genre: 'Science Fiction, Action',
+          director: 'Lana Wachowski and Lilly Wachowski',
+          cast: 'Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving',
+          description: 'A restless hacker is drawn into a hidden digital prison, discovering that reality is manufactured and the rebellion depends on his dangerous choice.',
+          cinemaName: 'Robinsons Dumaguete Cinema 2'
+        };
+      }
+
+      document.getElementById('movieTitleDisplay').textContent = selectedMovieDetails.title;
+      document.getElementById('moviePoster').src = selectedMovieDetails.image;
+      document.getElementById('moviePoster').alt = selectedMovieDetails.title;
+      document.getElementById('ratingDisplay').textContent = selectedMovieDetails.mtrcb;
+      document.getElementById('genreDisplay').textContent = selectedMovieDetails.genre;
+      document.getElementById('directorDisplay').textContent = selectedMovieDetails.director;
+      document.getElementById('castDisplay').textContent = selectedMovieDetails.cast;
+      document.getElementById('descriptionDisplay').textContent = selectedMovieDetails.description;
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load user data into header
+      const userData = JSON.parse(localStorage.getItem('cinespot_user'));
+      if (userData) {
+        // Update header name
+        const userNameElements = document.querySelectorAll('#user-name, #dropdown-user-name');
+        userNameElements.forEach(el => {
+          if (el) el.textContent = userData.name || 'User';
+        });
+
+        // Update dropdown email
+        const emailElement = document.getElementById('dropdown-user-email');
+        if (emailElement) emailElement.textContent = userData.email || 'user@cinespot.com';
+
+        // Update member since
+        const memberSinceElement = document.getElementById('dropdown-member-since');
+        if (memberSinceElement && userData.memberSince) {
+          const date = new Date(userData.memberSince);
+          memberSinceElement.textContent = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short'
+          });
+        }
+
+        // Update tickets
+        const ticketsElement = document.getElementById('dropdown-tickets');
+        if (ticketsElement) ticketsElement.textContent = userData.ticketsBooked || 0;
+      }
+
+      const profileContainer = document.querySelector('.profile-container');
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      const userText = document.querySelector('.cs-user-text');
+      const userIcon = document.querySelector('.cs-user-icon');
+
+      if (profileDropdown) {
+        const toggleDropdown = (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle('show');
+        };
+
+        if (profileContainer) {
+          profileContainer.addEventListener('click', toggleDropdown);
+        }
+        if (userText) {
+          userText.addEventListener('click', toggleDropdown);
+        }
+        if (userIcon) {
+          userIcon.addEventListener('click', toggleDropdown);
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+          profileDropdown.classList.remove('show');
+        });
+      }
+
+      // Handle sign out
+      const signOutLinks = document.querySelectorAll('.signout');
+      signOutLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('cinespot_logged_in');
+          window.location.href = 'login.html';
+        });
+      });
+
+      loadMovieDetails();
+      new CinemaBooking();
+    });
+  </script>
+</body>
+</html></content>
+<parameter name="filePath">c:\Users\ADMIN\Documents\CineSpot documents Project\movie-details.html

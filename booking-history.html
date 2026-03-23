@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Booking History - CineSpot</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-dark-frame">
+  <header class="cs-header">
+    <div class="cs-header-inner">
+      <div class="cs-header-left">
+        <a href="index.html" class="cs-logo-link">
+          <img
+            src="images/cinespot_transparent_bg.png"
+            alt="CineSpot logo"
+            class="cs-logo-image"
+          />
+        </a>
+      </div>
+
+      <nav class="cs-nav">
+        <a href="index.html" class="cs-nav-link">Now Showing</a>
+        <a href="cinemas.html" class="cs-nav-link">Cinemas</a>
+        <a href="advance-ticket-selling.html" class="cs-nav-link">Advance Ticket Selling</a>
+        <a href="coming-soon.html" class="cs-nav-link">Coming Soon</a>
+      </nav>
+
+      <div class="cs-header-right">
+        <div class="profile-container">
+          <span class="cs-user-text">Hi, <span id="user-name">User</span></span>
+          <img
+            src="images/profile_icon.png"
+            alt="Profile"
+            class="cs-user-icon"
+          />
+          <div class="profile-dropdown">
+            <div class="profile-overview">
+              <div class="profile-header">
+                <img src="images/profile_icon.png" alt="Profile" class="profile-avatar" />
+                <div>
+                  <p><strong id="dropdown-user-name">User</strong></p>
+                  <p class="profile-id">ID: CS-12345</p>
+                </div>
+              </div>
+              <div class="profile-details">
+                <p><strong>Email:</strong> <span id="dropdown-user-email">user@cinespot.com</span></p>
+                <p><strong>Member Since:</strong> <span id="dropdown-member-since">Jan 2024</span></p>
+                <p><strong>Tickets Booked:</strong> <span id="dropdown-tickets">0</span></p>
+              </div>
+            </div>
+            <div class="profile-menu">
+              <a href="profile.html" class="profile-link">View Profile</a>
+              <a href="booking-history.html" class="profile-link">Booking History</a>
+              <a href="account-settings.html" class="profile-link">Account Settings</a>
+              <a href="login.html" class="profile-link signout">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="back-button-container" style="max-width: 1200px; margin: 16px auto; padding: 0 20px;">
+    <a href="javascript:history.back()" class="back-button">← BACK</a>
+  </div>
+
+  <main class="cs-main">
+    <section class="booking-history-section">
+      <h1 class="section-title">Booking History</h1>
+
+      <div class="booking-filters">
+        <select class="filter-select">
+          <option value="all">All Bookings</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="past">Past</option>
+        </select>
+        <input type="date" class="filter-date" placeholder="Filter by date" />
+      </div>
+
+      <div class="booking-list" id="booking-list">
+        <!-- Bookings will be loaded dynamically -->
+      </div>
+
+      <div class="booking-summary" id="booking-summary">
+        <!-- Summary will be loaded dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <script src="index.js"></script>
+  <script>
+    // Load booking history
+    function loadBookingHistory() {
+      const userData = JSON.parse(localStorage.getItem('cinespot_user'));
+      if (!userData) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const bookingList = document.getElementById('booking-list');
+      const bookingSummary = document.getElementById('booking-summary');
+
+      const bookings = userData.bookings || [];
+
+      if (bookings.length === 0) {
+        bookingList.innerHTML = `
+          <div class="no-bookings">
+            <h3>No bookings found</h3>
+            <p>You haven't made any ticket bookings yet.</p>
+            <a href="index.html" class="btn-primary">Browse Movies</a>
+          </div>
+        `;
+
+        bookingSummary.innerHTML = `
+          <div class="summary-item">
+            <span>Total Bookings:</span>
+            <span>0</span>
+          </div>
+          <div class="summary-item">
+            <span>Total Spent:</span>
+            <span>₱0.00</span>
+          </div>
+          <div class="summary-item">
+            <span>Average per Booking:</span>
+            <span>₱0.00</span>
+          </div>
+        `;
+      } else {
+        // Sort bookings by date (newest first)
+        bookings.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+
+        let totalSpent = 0;
+        bookingList.innerHTML = bookings.map(booking => {
+          totalSpent += booking.price || 0;
+          const bookingDate = new Date(booking.bookingDate);
+          const formattedDate = bookingDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+
+          return `
+            <div class="booking-card">
+              <div class="booking-movie">
+                <img src="${booking.movieImage || 'images/placeholder.png'}" alt="${booking.movieTitle}" class="booking-poster" />
+                <div class="booking-details">
+                  <h3>${booking.movieTitle}</h3>
+                  <p class="booking-cinema">${booking.cinema}</p>
+                  <p class="booking-date">${formattedDate} - ${booking.showtime}</p>
+                  <p class="booking-seats">Seats: ${Array.isArray(booking.seats) ? booking.seats.join(', ') : booking.seats}</p>
+                </div>
+              </div>
+              <div class="booking-status">
+                <span class="status-${booking.status || 'completed'}">${(booking.status || 'completed').charAt(0).toUpperCase() + (booking.status || 'completed').slice(1)}</span>
+                <div class="booking-price">₱${(booking.price || 0).toFixed(2)}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const averageSpent = bookings.length > 0 ? totalSpent / bookings.length : 0;
+
+        bookingSummary.innerHTML = `
+          <div class="summary-item">
+            <span>Total Bookings:</span>
+            <span>${bookings.length}</span>
+          </div>
+          <div class="summary-item">
+            <span>Total Spent:</span>
+            <span>₱${totalSpent.toFixed(2)}</span>
+          </div>
+          <div class="summary-item">
+            <span>Average per Booking:</span>
+            <span>₱${averageSpent.toFixed(2)}</span>
+          </div>
+        `;
+      }
+    }
+
+    // Load bookings on page load
+    document.addEventListener('DOMContentLoaded', loadBookingHistory);
+  </script>
+</body>
+</html>

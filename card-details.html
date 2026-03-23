@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CineSpot – Card Details</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans+SC:wght@400&family=Manrope:wght@400;700&family=League+Gothic:wght@400&display=swap" rel="stylesheet">
+  <style>
+    /* Reuse the existing CineSpot content container style */
+    .moviegoer-main {
+      width: 100%;
+      background-color: var(--bg-light);
+      padding: 50px 0;
+      min-height: auto;
+      border-radius: 12px;
+      margin: 16px auto;
+      max-width: 1200px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-details-container {
+      max-width: 1200px;
+      margin: 160px auto 0;
+      padding: 0 40px;
+      display: flex;
+      gap: 60px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* LEFT CARD - PAYMENT INFORMATION */
+    .payment-info-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-light);
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .payment-info-label {
+      font-family: var(--font-main);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin: 0 0 15px 0;
+      padding: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .payment-amount {
+      font-family: var(--font-main);
+      font-size: 48px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 30px 0;
+      padding: 0;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+    }
+
+    .payment-detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-main);
+      font-size: 14px;
+      color: #ffffff;
+      margin: 12px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .payment-detail-label {
+      color: #cccccc;
+      font-weight: 500;
+    }
+
+    .payment-detail-value {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* RIGHT CARD - CREDIT CARD FORM */
+    .card-form-card {
+      background: #ffffff;
+      border: 2px solid var(--border-light);
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .card-form-title {
+      font-family: var(--font-main);
+      font-size: 18px;
+      font-weight: 700;
+      color: #333333;
+      margin: 0 0 30px 0;
+      padding: 0;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: clip;
+      line-height: 1.2;
+    }
+
+    .card-form-title span {
+      white-space: nowrap;
+      color: #1a1a1a;
+      padding-right: 4px;
+      display: inline-block;
+    }
+
+    .card-form-title-icon {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .form-label {
+      font-family: var(--font-main);
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a !important;
+      margin: 0 0 10px 0;
+      padding: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      background: transparent;
+      text-shadow: none;
+    }
+
+    .form-input,
+    #cardNumber,
+    #expiryMonth,
+    #expiryYear,
+    #cvv {
+      color: #000000 !important;
+      background-color: #ffffff !important;
+      border-color: #d0d0d0 !important;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: var(--font-main);
+      font-size: 16px;
+      color: #000000;
+      background: #ffffff;
+      border: 2px solid #d0d0d0;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #999999;
+    }
+
+    .form-input:focus {
+      border-color: #4285f4;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+      background: #ffffff;
+    }
+
+    /* Special styling for card number field */
+    #cardNumber {
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-align: center;
+      background: #ffffff;
+      border: 2px solid #d0d0d0;
+      position: relative;
+      color: #000000;
+    }
+
+    #cardNumber:focus {
+      border-color: #4285f4;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+      background: #ffffff;
+    }
+
+    /* Card Details Row - Proper horizontal layout */
+    .card-details-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .card-details-field {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-details-field label {
+      font-family: var(--font-main);
+      font-size: 12px;
+      font-weight: 700;
+      color: #666666;
+      margin: 0 0 10px 0;
+      padding: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: block;
+    }
+
+    .card-details-field input {
+      width: 100%;
+      padding: 14px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      letter-spacing: 1px;
+      color: #000000;
+      background: #ffffff;
+      border: 2px solid #d0d0d0;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .card-details-field input:focus {
+      border-color: #4285f4;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(66, 133, 244, 0.1);
+      background: #ffffff;
+    }
+
+    .card-details-field input::placeholder {
+      color: #bbb;
+      font-weight: 400;
+    }
+
+    /* Card Icon Container */
+    .card-details-row > div:last-child {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 6px;
+    }
+
+    /* Card Icon */
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+      transition: transform 0.3s ease;
+    }
+
+    .card-icon:hover {
+      transform: scale(1.05);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-row-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .btn-cancel {
+      padding: 14px 24px;
+      font-family: var(--font-main);
+      font-size: 16px;
+      font-weight: 600;
+      color: #e50914;
+      background: #ffffff;
+      border: 2px solid #e50914;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-cancel:hover {
+      background: #f5f5f5;
+      color: #c40812;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(229, 9, 20, 0.25);
+      border-color: #c40812;
+    }
+
+    .btn-submit {
+      padding: 14px 24px;
+      font-family: var(--font-main);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+    }
+
+    @media (max-width: 900px) {
+      .card-details-container {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .payment-info-card,
+      .card-form-card {
+        max-width: 100%;
+      }
+    }
+
+    /* Footer positioning */
+    .cs-footer {
+      margin-top: 300px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header from movie-details.html -->
+  <header class="cs-header">
+    <div class="cs-header-inner">
+      <div class="cs-header-left">
+        <a href="index.html" class="cs-logo-link">
+          <img
+            src="images/cinespot_transparent_bg.png"
+            alt="CineSpot logo"
+            class="cs-logo-image"
+          />
+        </a>
+      </div>
+
+      <nav class="cs-nav">
+        <a href="index.html" class="cs-nav-link">Now Showing</a>
+        <a href="cinemas.html" class="cs-nav-link">Cinemas</a>
+        <a href="advance-ticket-selling.html" class="cs-nav-link">Advance Ticket Selling</a>
+        <a href="coming-soon.html" class="cs-nav-link">Coming Soon</a>
+      </nav>
+
+      <div class="cs-header-right">
+        <div class="profile-container">
+          <span class="cs-user-text">Hi, <span id="user-name">User</span></span>
+          <img
+            src="images/profile_icon.png"
+            alt="Profile"
+            class="cs-user-icon"
+          />
+          <div class="profile-dropdown">
+            <div class="profile-overview">
+              <div class="profile-header">
+                <img src="images/profile_icon.png" alt="Profile" class="profile-avatar" />
+                <div>
+                  <p><strong id="dropdown-user-name">User</strong></p>
+                  <p class="profile-id">ID: CS-12345</p>
+                </div>
+              </div>
+              <div class="profile-details">
+                <p><strong>Email:</strong> <span id="dropdown-user-email">user@cinespot.com</span></p>
+                <p><strong>Member Since:</strong> <span id="dropdown-member-since">Jan 2024</span></p>
+                <p><strong>Tickets Booked:</strong> <span id="dropdown-tickets">0</span></p>
+              </div>
+            </div>
+            <div class="profile-menu">
+              <a href="profile.html" class="profile-link">View Profile</a>
+              <a href="booking-history.html" class="profile-link">Booking History</a>
+              <a href="account-settings.html" class="profile-link">Account Settings</a>
+              <a href="login.html" class="profile-link signout">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="back-button-container" style="max-width: 1200px; margin: 16px auto; padding: 0 20px;">
+    <a href="javascript:history.back()" class="back-button">← BACK</a>
+  </div>
+
+  <!-- Main Card Details Content -->
+  <main class="moviegoer-main">
+    <div class="card-details-container">
+      <!-- LEFT CARD - PAYMENT INFORMATION -->
+      <div class="payment-info-card">
+        <p class="payment-info-label">You are about to pay</p>
+        <p class="payment-amount" id="paymentAmountDisplay">PHP 340.00</p>
+
+        <div class="payment-detail-row">
+          <span class="payment-detail-label">Reference No.</span>
+          <span class="payment-detail-value" id="referenceNo">REF123456789</span>
+        </div>
+
+        <div class="payment-detail-row">
+          <span class="payment-detail-label">Transaction ID</span>
+          <span class="payment-detail-value" id="transactionId">TXN987654321</span>
+        </div>
+      </div>
+
+      <!-- RIGHT CARD - CREDIT CARD FORM -->
+      <div class="card-form-card">
+        <h2 class="card-form-title">
+          <img src="images/card_icon.png" alt="Card" class="card-form-title-icon">
+          <span>Pay using credit/debit card</span>
+        </h2>
+
+        <form id="cardForm" onsubmit="handleSubmit(event)">
+          <!-- Name on Card -->
+          <div class="form-group">
+            <label class="form-label">Name on Card</label>
+            <input type="text" class="form-input" id="cardName" placeholder="John Doe" required>
+          </div>
+
+          <!-- Card Number -->
+          <div class="form-group">
+            <label class="form-label">Card Number</label>
+            <input type="text" class="form-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+          </div>
+
+          <!-- Card Details Row - Expiry Date and CVV -->
+          <div class="card-details-row">
+            <div class="card-details-field">
+              <label>Expiration Date</label>
+              <div style="display: flex; gap: 10px;">
+                <input type="text" id="expiryMonth" placeholder="MM" maxlength="2" required style="flex: 1; text-align: center;">
+                <span style="display: flex; align-items: center; color: #999;">/</span>
+                <input type="text" id="expiryYear" placeholder="YY" maxlength="2" required style="flex: 1; text-align: center;">
+              </div>
+            </div>
+            <div class="card-details-field">
+              <label>CVV</label>
+              <input type="text" id="cvv" placeholder="123" maxlength="3" required>
+            </div>
+          </div>
+
+          <!-- Form Buttons -->
+          <div class="form-buttons">
+            <button type="button" class="btn-cancel" onclick="handleCancel()">Cancel</button>
+            <button type="submit" class="btn-submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer from styles.css -->
+  <footer class="cs-footer"></footer>
+
+  <script>
+    class CardDetailsPage {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        // Retrieve payment data from sessionStorage
+        const paymentData = JSON.parse(sessionStorage.getItem('paymentData')) || {
+          totalPrice: 340.00,
+          referenceNumber: 'REF' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+          transactionID: 'TXN' + Math.random().toString(36).substr(2, 9).toUpperCase()
+        };
+
+        // Generate reference and transaction IDs if not present
+        if (!paymentData.referenceNumber) {
+          paymentData.referenceNumber = 'REF' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+        if (!paymentData.transactionID) {
+          paymentData.transactionID = 'TXN' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        // Update payment display
+        this.updatePaymentDisplay(paymentData);
+
+        // Store in sessionStorage for next page
+        sessionStorage.setItem('paymentData', JSON.stringify(paymentData));
+      }
+
+      updatePaymentDisplay(paymentData) {
+        const amount = paymentData.totalPrice || 340.00;
+        document.getElementById('paymentAmountDisplay').textContent = `PHP ${amount.toFixed(2)}`;
+        document.getElementById('referenceNo').textContent = paymentData.referenceNumber;
+        document.getElementById('transactionId').textContent = paymentData.transactionID;
+      }
+    }
+
+    function handleCancel() {
+      // Redirect back to payment page
+      window.location.href = 'payment.html';
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+
+      // Get expiry date from separate MM and YY fields
+      const expiryMonth = document.getElementById('expiryMonth').value;
+      const expiryYear = document.getElementById('expiryYear').value;
+      const expiryDateStr = expiryMonth + '/' + expiryYear;
+
+      // Collect card details
+      const cardDetails = {
+        cardName: document.getElementById('cardName').value,
+        cardNumber: document.getElementById('cardNumber').value,
+        expiryDate: expiryDateStr,
+        expiryMonth: expiryMonth || '',
+        expiryYear: expiryYear || '',
+        cvv: document.getElementById('cvv').value
+      };
+
+      // Validate card details
+      if (!validateCardDetails(cardDetails)) {
+        alert('Please fill in all required fields correctly.');
+        return;
+      }
+
+      // Get payment data and movie data
+      let paymentData = JSON.parse(sessionStorage.getItem('paymentData')) || {};
+      const movieData = JSON.parse(sessionStorage.getItem('movieSelection')) || {};
+
+      // Create booking record
+      const booking = {
+        id: 'BK' + Date.now(),
+        movieTitle: movieData.title || 'Unknown Movie',
+        movieImage: movieData.image || '',
+        cinema: movieData.cinemaName || 'CineSpot Cinema',
+        showtime: paymentData.showtime || 'TBD',
+        seats: paymentData.seats || ['TBD'],
+        price: paymentData.totalPrice || 0,
+        bookingDate: new Date().toISOString(),
+        status: 'completed',
+        referenceNumber: paymentData.referenceNumber || 'REF' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+        transactionId: paymentData.transactionID || 'TXN' + Math.random().toString(36).substr(2, 9).toUpperCase()
+      };
+
+      // Save booking to localStorage
+      const userData = JSON.parse(localStorage.getItem('cinespot_user')) || {};
+      if (!userData.bookings) {
+        userData.bookings = [];
+      }
+      userData.bookings.push(booking);
+      userData.ticketsBooked = userData.bookings.length;
+      localStorage.setItem('cinespot_user', JSON.stringify(userData));
+
+      // Store card details and payment data
+      paymentData.cardDetails = cardDetails;
+      paymentData.paymentStatus = 'completed';
+      sessionStorage.setItem('paymentData', JSON.stringify(paymentData));
+
+      // Redirect to ticket success page
+      window.location.href = 'ticket-success.html';
+    }
+
+    function validateCardDetails(cardDetails) {
+      // Validate name (at least 2 characters)
+      if (cardDetails.cardName.trim().length < 2) {
+        return false;
+      }
+
+      // Validate card number (at least 13 digits)
+      const cardNumber = cardDetails.cardNumber.replace(/\s/g, '');
+      if (!/^\d{13,19}$/.test(cardNumber)) {
+        return false;
+      }
+
+      // Validate expiry date format (MM/YY)
+      const expiryDate = cardDetails.expiryDate || '';
+      if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+        return false;
+      }
+
+      const expiryParts = expiryDate.split('/');
+      const month = parseInt(expiryParts[0]);
+      if (isNaN(month) || month < 1 || month > 12) {
+        return false;
+      }
+
+      const year = parseInt(expiryParts[1]);
+      if (isNaN(year) || year < 0 || year > 99) {
+        return false;
+      }
+
+      // Validate CVV (3 digits)
+      if (!/^\d{3}$/.test(cardDetails.cvv)) {
+        return false;
+      }
+
+      return true;
+    }
+
+    // Format card number as user types
+    document.getElementById('cardNumber').addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\s/g, '');
+      let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+      e.target.value = formattedValue;
+    });
+
+    // Only allow numbers in expiry and CVV fields
+    document.getElementById('expiryMonth').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+    });
+
+    document.getElementById('expiryYear').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^\d]/g, '').slice(0, 2);
+    });
+
+    document.getElementById('cvv').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^\d]/g, '').slice(0, 3);
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      new CardDetailsPage();
+
+      // Load user data into header
+      const userData = JSON.parse(localStorage.getItem('cinespot_user'));
+      if (userData) {
+        // Update header name
+        const userNameElements = document.querySelectorAll('#user-name, #dropdown-user-name');
+        userNameElements.forEach(el => {
+          if (el) el.textContent = userData.name || 'User';
+        });
+
+        // Update dropdown email
+        const emailElement = document.getElementById('dropdown-user-email');
+        if (emailElement) emailElement.textContent = userData.email || 'user@cinespot.com';
+
+        // Update member since
+        const memberSinceElement = document.getElementById('dropdown-member-since');
+        if (memberSinceElement && userData.memberSince) {
+          const date = new Date(userData.memberSince);
+          memberSinceElement.textContent = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short'
+          });
+        }
+
+        // Update tickets
+        const ticketsElement = document.getElementById('dropdown-tickets');
+        if (ticketsElement) ticketsElement.textContent = userData.ticketsBooked || 0;
+      }
+
+      // Profile dropdown functionality
+      const profileContainer = document.querySelector('.profile-container');
+      const profileDropdown = document.querySelector('.profile-dropdown');
+
+      if (profileContainer && profileDropdown) {
+        profileContainer.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+          profileDropdown.classList.remove('show');
+        });
+      }
+
+      // Handle sign out
+      const signOutLinks = document.querySelectorAll('.signout');
+      signOutLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('cinespot_logged_in');
+          window.location.href = 'login.html';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

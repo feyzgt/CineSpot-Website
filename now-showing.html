@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CineSpot – Now Showing</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-dark-frame">
+  <header class="cs-header">
+    <div class="cs-header-inner">
+      <div class="cs-header-left">
+        <a href="index.html" class="cs-logo-link">
+          <img src="images/cinespot_transparent_bg.png" alt="CineSpot logo" class="cs-logo-image" />
+        </a>
+      </div>
+      <nav class="cs-nav">
+        <a href="now-showing.html" class="cs-nav-link">Now Showing</a>
+        <a href="cinemas.html" class="cs-nav-link">Cinemas</a>
+        <a href="advance-ticket-selling.html" class="cs-nav-link">Advance Ticket Selling</a>
+        <a href="coming-soon.html" class="cs-nav-link">Coming Soon</a>
+      </nav>
+      <div class="cs-header-right">
+        <div class="profile-container">
+          <span class="cs-user-text">Hi, User</span>
+          <img src="images/profile_icon.png" alt="Profile" class="cs-user-icon" />
+          <div class="profile-dropdown">
+            <div class="profile-overview">
+              <div class="profile-header">
+                <img src="images/profile_icon.png" alt="Profile" class="profile-avatar" />
+                <div>
+                  <p><strong id="dropdown-user-name">User</strong></p>
+                  <p class="profile-id">ID: CS-12345</p>
+                </div>
+              </div>
+              <div class="profile-details">
+                <p><strong>Email:</strong> <span id="dropdown-user-email">user@cinespot.com</span></p>
+                <p><strong>Member Since:</strong> <span id="dropdown-member-since">Jan 2024</span></p>
+                <p><strong>Tickets Booked:</strong> <span id="dropdown-tickets">0</span></p>
+              </div>
+            </div>
+            <div class="profile-menu">
+              <a href="profile.html" class="profile-link">View Profile</a>
+              <a href="booking-history.html" class="profile-link">Booking History</a>
+              <a href="account-settings.html" class="profile-link">Account Settings</a>
+              <a href="login.html" class="profile-link signout">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="back-button-container" style="max-width: 1200px; margin: 16px auto; padding: 0 20px;">
+    <a href="javascript:history.back()" class="back-button">← BACK</a>
+  </div>
+
+  <main class="cs-main">
+    <section class="cs-movies-header">
+      <h1 class="cs-movies-title">Movies</h1>
+    </section>
+    <div class="cs-divider"></div>
+    <section id="now-showing" class="movie-section" data-section="now-showing">
+      <h2 class="movie-section-title">Now Showing</h2>
+      <div class="movie-row-simple">
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('Annihilation')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/annihilation.png" alt="Annihilation" class="movie-poster" /><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">Annihilation</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('The Batman')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/batman.png" alt="The Batman" class="movie-poster" /><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">The Batman</p></div></a>
+        <a href="movie-details.html" class="movie-link" onclick="return selectMovie('The Evil Dead')"><div class="movie-card"><div class="movie-poster-wrap"><img src="images/evildead.png" alt="The Evil Dead" class="movie-poster" /><div class="movie-poster-overlay">CLICK POSTER TO BUY TICKETS</div></div><div class="movie-bottom-label">CLICK POSTER TO BUY TICKETS</div><p class="movie-title">The Evil Dead</p></div></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cs-footer"></footer>
+  <script src="index.js"></script>
+  <script>
+    const movieCatalog = {
+      'Annihilation': {
+        title: 'Annihilation',
+        image: 'images/annihilation.png',
+        mtrcb: 'R-16',
+        genre: 'Science Fiction, Horror',
+        director: 'Alex Garland',
+        cast: 'Natalie Portman, Jennifer Jason Leigh, Gina Rodriguez',
+        description: 'A biologist signs up for a dangerous expedition into a mysterious zone where the laws of nature don\'t apply.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'The Batman': {
+        title: 'The Batman',
+        image: 'images/batman.png',
+        mtrcb: 'R-13',
+        genre: 'Action, Crime',
+        director: 'Matt Reeves',
+        cast: 'Robert Pattinson, Zoe Kravitz, Paul Dano',
+        description: 'Batman uncovers corruption in Gotham while pursuing the Riddler.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      },
+      'The Evil Dead': {
+        title: 'The Evil Dead',
+        image: 'images/evildead.png',
+        mtrcb: 'R-16',
+        genre: 'Horror, Thriller',
+        director: 'Sam Raimi',
+        cast: 'Bruce Campbell, Ellen Sandweiss, Sarah Berry',
+        description: 'Five friends unleash demonic forces in a remote cabin.',
+        cinemaName: 'Robinsons Dumaguete Cinema 2'
+      }
+    };
+
+    function selectMovie(key) {
+      const selection = movieCatalog[key] || movieCatalog['Annihilation'];
+      sessionStorage.setItem('movieSelection', JSON.stringify(selection));
+      window.location.href = 'movie-details.html';
+      return false;
+    }
+  </script>
+</body>
+</html>
+
